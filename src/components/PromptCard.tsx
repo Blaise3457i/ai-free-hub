@@ -25,7 +25,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
         <div className="aspect-[4/3] overflow-hidden">
           <img 
             src={prompt.outputImage} 
-            alt="Prompt Output" 
+            alt={`AI generated output for prompt: ${prompt.text.substring(0, 50)}...`} 
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />

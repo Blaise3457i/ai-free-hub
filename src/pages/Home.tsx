@@ -224,6 +224,52 @@ export function Home() {
         </div>
       </section>
 
+      {/* SEO Content Section */}
+      <section className="py-24 bg-slate-50/50 dark:bg-slate-900/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-8">Why Choose AI Free Hub?</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                In a world where artificial intelligence is rapidly changing how we work and create, finding the right tools shouldn't be expensive. AI Free Hub is your dedicated resource for discovering the most powerful <strong>free AI tools</strong> and <strong>AI prompts</strong> available today.
+              </p>
+              <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+                Whether you're looking for <strong>free AI image generators</strong> like Stable Diffusion, <strong>AI video creation tools</strong>, or <strong>ChatGPT prompts</strong> to enhance your workflow, our curated directory has everything you need to stay ahead of the curve.
+              </p>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+                  <div className="text-2xl font-black text-purple-600 mb-1">500+</div>
+                  <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Free Tools</div>
+                </div>
+                <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+                  <div className="text-2xl font-black text-blue-600 mb-1">2k+</div>
+                  <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Expert Prompts</div>
+                </div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl shadow-purple-500/20">
+                <img 
+                  src="https://picsum.photos/seed/ai-seo/800/800" 
+                  alt="AI Free Hub - The Best Free AI Tools Directory" 
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <div className="absolute -bottom-8 -left-8 bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 max-w-xs">
+                <p className="text-sm font-bold text-slate-900 dark:text-white italic">
+                  "The most comprehensive collection of free AI resources I've found. A must-bookmark for any creator."
+                </p>
+                <div className="mt-4 flex items-center">
+                  <div className="w-8 h-8 rounded-full bg-purple-100 mr-3"></div>
+                  <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Verified Review</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Newsletter */}
       <section className="py-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-[2.5rem] p-12 lg:p-20 shadow-2xl shadow-purple-500/20">

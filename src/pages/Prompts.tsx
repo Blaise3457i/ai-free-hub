@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
-import { Search, Sparkles, TrendingUp } from 'lucide-react';
+import { Sparkles, TrendingUp } from 'lucide-react';
 import { PromptCard } from '../components/PromptCard';
+import { SearchBar } from '../components/SearchBar';
 import { PROMPTS } from '../data/mockData';
 
 const CATEGORIES = ['All', 'Image', 'Text', 'Video'];
@@ -11,7 +12,10 @@ export function Prompts() {
 
   const filteredPrompts = useMemo(() => {
     return PROMPTS.filter(prompt => {
-      const matchesSearch = prompt.text.toLowerCase().includes(searchQuery.toLowerCase());
+      const q = searchQuery.toLowerCase();
+      const matchesSearch = prompt.text.toLowerCase().includes(q) ||
+                           prompt.category.toLowerCase().includes(q) ||
+                           prompt.badge.toLowerCase().includes(q);
       const matchesCategory = activeCategory === 'All' || prompt.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
@@ -26,20 +30,12 @@ export function Prompts() {
             Unlock the full potential of AI with our curated collection of high-performing prompts.
           </p>
           
-          {/* Prominent Search Bar */}
-          <div className="relative max-w-3xl mx-auto group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400" />
-              <input 
-                type="text" 
-                placeholder="Search thousands of AI prompts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-[2rem] pl-16 pr-6 py-6 text-lg focus:outline-none focus:ring-4 focus:ring-purple-500/10 dark:text-white transition-all shadow-xl"
-              />
-            </div>
-          </div>
+          <SearchBar 
+            className="max-w-3xl mx-auto" 
+            placeholder="Search thousands of AI prompts..." 
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
         </div>
 
         {/* Trending Section */}

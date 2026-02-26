@@ -8,10 +8,16 @@ const CATEGORIES = ['All', 'AI Art', 'AI Writing', 'AI Automation', 'Marketing']
 
 export function Tutorials() {
   const [activeCategory, setActiveCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredTutorials = TUTORIALS.filter(tut => 
-    activeCategory === 'All' || tut.category === activeCategory
-  );
+  const filteredTutorials = TUTORIALS.filter(tut => {
+    const q = searchQuery.toLowerCase();
+    const matchesCategory = activeCategory === 'All' || tut.category === activeCategory;
+    const matchesSearch = tut.title.toLowerCase().includes(q) || 
+                         tut.description.toLowerCase().includes(q) ||
+                         tut.category.toLowerCase().includes(q);
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="pt-32 pb-24 min-h-screen">
@@ -21,7 +27,12 @@ export function Tutorials() {
           <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-10">
             Step-by-step guides to help you master the latest AI tools and technologies.
           </p>
-          <SearchBar className="max-w-3xl mx-auto" placeholder="Search for AI tutorials..." />
+          <SearchBar 
+            className="max-w-3xl mx-auto" 
+            placeholder="Search for AI tutorials..." 
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
         </div>
 
         {/* Category Filter */}

@@ -1,10 +1,11 @@
 import { useSearchParams, Link } from 'react-router-dom';
 import { useMemo } from 'react';
-import { Search as SearchIcon, Zap, Sparkles, BookOpen, ArrowRight } from 'lucide-react';
+import { Search as SearchIcon, Zap, Sparkles, BookOpen, Building2 } from 'lucide-react';
 import { ToolCard } from '../components/ToolCard';
 import { PromptCard } from '../components/PromptCard';
 import { TutorialCard } from '../components/TutorialCard';
-import { TOOLS, PROMPTS, TUTORIALS } from '../data/mockData';
+import { ProviderCard } from '../components/ProviderCard';
+import { TOOLS, PROMPTS, TUTORIALS, PROVIDERS } from '../data/mockData';
 import { motion } from 'motion/react';
 
 export function Search() {
@@ -12,17 +13,36 @@ export function Search() {
   const query = searchParams.get('q') || '';
 
   const results = useMemo(() => {
-    if (!query) return { tools: [], prompts: [], tutorials: [] };
+    if (!query) return { tools: [], prompts: [], tutorials: [], providers: [] };
 
     const q = query.toLowerCase();
     return {
-      tools: TOOLS.filter(t => t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q)),
-      prompts: PROMPTS.filter(p => p.text.toLowerCase().includes(q)),
-      tutorials: TUTORIALS.filter(t => t.title.toLowerCase().includes(q) || t.description.toLowerCase().includes(q)),
+      tools: TOOLS.filter(t => 
+        t.name.toLowerCase().includes(q) || 
+        t.description.toLowerCase().includes(q) ||
+        t.category.toLowerCase().includes(q)
+      ),
+      prompts: PROMPTS.filter(p => 
+        p.text.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.badge.toLowerCase().includes(q)
+      ),
+      tutorials: TUTORIALS.filter(t => 
+        t.title.toLowerCase().includes(q) || 
+        t.description.toLowerCase().includes(q) ||
+        t.category.toLowerCase().includes(q)
+      ),
+      providers: PROVIDERS.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        p.description.toLowerCase().includes(q) ||
+        p.type.toLowerCase().includes(q) ||
+        'ai providers'.includes(q) ||
+        'providers'.includes(q)
+      ),
     };
   }, [query]);
 
-  const totalResults = results.tools.length + results.prompts.length + results.tutorials.length;
+  const totalResults = results.tools.length + results.prompts.length + results.tutorials.length + results.providers.length;
 
   return (
     <div className="pt-32 pb-24 min-h-screen">
@@ -93,6 +113,23 @@ export function Search() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-12">
                   {results.tutorials.map(tutorial => (
                     <TutorialCard key={tutorial.id} tutorial={tutorial} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Providers Results */}
+            {results.providers.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center space-x-2">
+                    <Building2 className="w-5 h-5 text-amber-600" />
+                    <h2 className="text-2xl font-bold dark:text-white">AI Providers ({results.providers.length})</h2>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {results.providers.map(provider => (
+                    <ProviderCard key={provider.id} provider={provider} />
                   ))}
                 </div>
               </section>
