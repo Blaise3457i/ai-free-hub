@@ -2,64 +2,64 @@ import { AITool, AIPrompt, Tutorial, BlogPost, AIProvider } from '../types';
 
 export const TOOLS: AITool[] = [
   // Image Generators
-  { id: 'img-1', name: 'DALL·E Mini', description: 'Generate images from any prompt with this open-source version of DALL-E.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/dalle/800/600', link: 'https://www.craiyon.com/' },
-  { id: 'img-2', name: 'Craiyon', description: 'The original DALL-E Mini, accessible and free for everyone to create AI art.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/craiyon/800/600', link: 'https://www.craiyon.com/' },
-  { id: 'img-3', name: 'Stable Diffusion', description: 'Powerful open-source latent text-to-image diffusion model.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/sd/800/600', link: 'https://stablediffusionweb.com/' },
-  { id: 'img-4', name: 'DeepAI Image Generator', description: 'Simple and fast AI image generation for creative projects.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/deepai/800/600', link: 'https://deepai.org/machine-learning-model/text2img' },
-  { id: 'img-5', name: 'Artbreeder', description: 'Collaborative tool for discovering and creating images through genetic mixing.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/artbreeder/800/600', link: 'https://www.artbreeder.com/' },
-  { id: 'img-6', name: 'NightCafe', description: 'Create amazing AI art using various methods like Neural Style Transfer and VQGAN+CLIP.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/nightcafe/800/600', link: 'https://creator.nightcafe.studio/' },
-  { id: 'img-7', name: 'Dream by Wombo', description: 'High-quality AI art generator with unique artistic styles.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/wombo/800/600', link: 'https://dream.ai/' },
-  { id: 'img-8', name: 'Pixray', description: 'Image generation system with a wide variety of engines and styles.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/pixray/800/600', link: 'https://pixray.gob.io/' },
-  { id: 'img-9', name: 'Fotor AI Art', description: 'Turn text into art in seconds with this easy-to-use AI generator.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/fotor/800/600', link: 'https://www.fotor.com/features/ai-image-generator/' },
-  { id: 'img-10', name: 'Runway ML', description: 'Professional creative suite with advanced AI image and video tools.', category: 'Image', isFree: true, image: 'https://picsum.photos/seed/runway/800/600', link: 'https://runwayml.com/' },
+  { id: 'img-1', name: 'DALL·E Mini', description: 'Generate images from any prompt with this open-source version of DALL-E.', category: 'Image', isFree: true, image: 'https://unavatar.io/craiyon.com', link: 'https://www.craiyon.com/' },
+  { id: 'img-2', name: 'Craiyon', description: 'The original DALL-E Mini, accessible and free for everyone to create AI art.', category: 'Image', isFree: true, image: 'https://unavatar.io/craiyon.com', link: 'https://www.craiyon.com/' },
+  { id: 'img-3', name: 'Stable Diffusion', description: 'Powerful open-source latent text-to-image diffusion model.', category: 'Image', isFree: true, image: 'https://unavatar.io/stablediffusionweb.com', link: 'https://stablediffusionweb.com/' },
+  { id: 'img-4', name: 'DeepAI Image Generator', description: 'Simple and fast AI image generation for creative projects.', category: 'Image', isFree: true, image: 'https://unavatar.io/deepai.org', link: 'https://deepai.org/machine-learning-model/text2img' },
+  { id: 'img-5', name: 'Artbreeder', description: 'Collaborative tool for discovering and creating images through genetic mixing.', category: 'Image', isFree: true, image: 'https://unavatar.io/artbreeder.com', link: 'https://www.artbreeder.com/' },
+  { id: 'img-6', name: 'NightCafe', description: 'Create amazing AI art using various methods like Neural Style Transfer and VQGAN+CLIP.', category: 'Image', isFree: true, image: 'https://unavatar.io/nightcafe.studio', link: 'https://creator.nightcafe.studio/' },
+  { id: 'img-7', name: 'Dream by Wombo', description: 'High-quality AI art generator with unique artistic styles.', category: 'Image', isFree: true, image: 'https://unavatar.io/dream.ai', link: 'https://dream.ai/' },
+  { id: 'img-8', name: 'Pixray', description: 'Image generation system with a wide variety of engines and styles.', category: 'Image', isFree: true, image: 'https://unavatar.io/pixray.io', link: 'https://pixray.gob.io/' },
+  { id: 'img-9', name: 'Fotor AI Art', description: 'Turn text into art in seconds with this easy-to-use AI generator.', category: 'Image', isFree: true, image: 'https://unavatar.io/fotor.com', link: 'https://www.fotor.com/features/ai-image-generator/' },
+  { id: 'img-10', name: 'Runway ML', description: 'Professional creative suite with advanced AI image and video tools.', category: 'Image', isFree: true, image: 'https://unavatar.io/runwayml.com', link: 'https://runwayml.com/' },
 
   // Video Generators
-  { id: 'vid-1', name: 'Pictory AI', description: 'Automatically create short, highly-sharable branded videos from your long-form content.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/pictory/800/600', link: 'https://pictory.ai/' },
-  { id: 'vid-2', name: 'Synthesia', description: 'Create professional videos with AI avatars and voiceovers in minutes.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/synthesia/800/600', link: 'https://www.synthesia.io/' },
-  { id: 'vid-3', name: 'Lumen5', description: 'Video creation platform designed for brands and businesses to produce social content.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/lumen5/800/600', link: 'https://lumen5.com/' },
-  { id: 'vid-4', name: 'InVideo', description: 'Online video editor with thousands of templates and AI-powered features.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/invideo/800/600', link: 'https://invideo.io/' },
-  { id: 'vid-5', name: 'FlexClip', description: 'Simple yet powerful video maker and editor for creating professional videos.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/flexclip/800/600', link: 'https://www.flexclip.com/' },
-  { id: 'vid-6', name: 'Animaker AI', description: 'The future of video making is here with AI-powered animation tools.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/animaker/800/600', link: 'https://www.animaker.com/' },
-  { id: 'vid-7', name: 'Veed.io AI', description: 'Record and edit videos in your browser with AI-powered subtitles and more.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/veed/800/600', link: 'https://www.veed.io/' },
-  { id: 'vid-8', name: 'DeepBrain AI', description: 'Create realistic AI avatar videos with text-to-speech technology.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/deepbrain/800/600', link: 'https://www.deepbrain.io/' },
-  { id: 'vid-9', name: 'Magisto', description: 'Smart video editor that automatically turns your photos and clips into movies.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/magisto/800/600', link: 'https://www.magisto.com/' },
-  { id: 'vid-10', name: 'Kapwing AI Tools', description: 'Collaborative video editing platform with a suite of AI-powered tools.', category: 'Video', isFree: true, image: 'https://picsum.photos/seed/kapwing/800/600', link: 'https://www.kapwing.com/' },
+  { id: 'vid-1', name: 'Pictory AI', description: 'Automatically create short, highly-sharable branded videos from your long-form content.', category: 'Video', isFree: true, image: 'https://unavatar.io/pictory.ai', link: 'https://pictory.ai/' },
+  { id: 'vid-2', name: 'Synthesia', description: 'Create professional videos with AI avatars and voiceovers in minutes.', category: 'Video', isFree: true, image: 'https://unavatar.io/synthesia.io', link: 'https://www.synthesia.io/' },
+  { id: 'vid-3', name: 'Lumen5', description: 'Video creation platform designed for brands and businesses to produce social content.', category: 'Video', isFree: true, image: 'https://unavatar.io/lumen5.com', link: 'https://lumen5.com/' },
+  { id: 'vid-4', name: 'InVideo', description: 'Online video editor with thousands of templates and AI-powered features.', category: 'Video', isFree: true, image: 'https://unavatar.io/invideo.io', link: 'https://invideo.io/' },
+  { id: 'vid-5', name: 'FlexClip', description: 'Simple yet powerful video maker and editor for creating professional videos.', category: 'Video', isFree: true, image: 'https://unavatar.io/flexclip.com', link: 'https://www.flexclip.com/' },
+  { id: 'vid-6', name: 'Animaker AI', description: 'The future of video making is here with AI-powered animation tools.', category: 'Video', isFree: true, image: 'https://unavatar.io/animaker.com', link: 'https://www.animaker.com/' },
+  { id: 'vid-7', name: 'Veed.io AI', description: 'Record and edit videos in your browser with AI-powered subtitles and more.', category: 'Video', isFree: true, image: 'https://unavatar.io/veed.io', link: 'https://www.veed.io/' },
+  { id: 'vid-8', name: 'DeepBrain AI', description: 'Create realistic AI avatar videos with text-to-speech technology.', category: 'Video', isFree: true, image: 'https://unavatar.io/deepbrain.io', link: 'https://www.deepbrain.io/' },
+  { id: 'vid-9', name: 'Magisto', description: 'Smart video editor that automatically turns your photos and clips into movies.', category: 'Video', isFree: true, image: 'https://unavatar.io/magisto.com', link: 'https://www.magisto.com/' },
+  { id: 'vid-10', name: 'Kapwing AI Tools', description: 'Collaborative video editing platform with a suite of AI-powered tools.', category: 'Video', isFree: true, image: 'https://unavatar.io/kapwing.com', link: 'https://www.kapwing.com/' },
 
   // Text/Code Assistants
-  { id: 'txt-1', name: 'ChatGPT Free', description: 'The world-leading conversational AI for text generation and problem-solving.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/chatgpt/800/600', link: 'https://chat.openai.com/' },
-  { id: 'txt-2', name: 'Claude AI', description: 'Helpful, harmless, and honest AI assistant by Anthropic.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/claude/800/600', link: 'https://claude.ai/' },
-  { id: 'txt-3', name: 'Poe AI', description: 'Access multiple AI models including GPT-4 and Claude in one place.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/poe/800/600', link: 'https://poe.com/' },
-  { id: 'txt-4', name: 'Perplexity AI', description: 'AI-powered search engine that provides direct answers with citations.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/perplexity/800/600', link: 'https://www.perplexity.ai/' },
-  { id: 'txt-5', name: 'YouChat', description: 'AI search assistant that helps you find answers and create content.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/youchat/800/600', link: 'https://you.com/' },
-  { id: 'txt-6', name: 'Copy.ai', description: 'AI writing assistant for marketing copy and content creation.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/copyai/800/600', link: 'https://www.copy.ai/' },
-  { id: 'txt-7', name: 'Jasper AI', description: 'Advanced AI content platform for teams and businesses.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/jasper/800/600', link: 'https://www.jasper.ai/' },
-  { id: 'txt-8', name: 'Writesonic', description: 'AI writer for creating SEO-friendly content and marketing materials.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/writesonic/800/600', link: 'https://writesonic.com/' },
-  { id: 'txt-9', name: 'Grammarly AI', description: 'AI-powered writing assistant that helps you write clearly and effectively.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/grammarly/800/600', link: 'https://www.grammarly.com/' },
-  { id: 'txt-10', name: 'AI Dungeon', description: 'Infinite AI-generated text adventure game.', category: 'Text', isFree: true, image: 'https://picsum.photos/seed/aidungeon/800/600', link: 'https://play.aidungeon.io/' },
+  { id: 'txt-1', name: 'ChatGPT Free', description: 'The world-leading conversational AI for text generation and problem-solving.', category: 'Text', isFree: true, image: 'https://unavatar.io/openai.com', link: 'https://chat.openai.com/' },
+  { id: 'txt-2', name: 'Claude AI', description: 'Helpful, harmless, and honest AI assistant by Anthropic.', category: 'Text', isFree: true, image: 'https://unavatar.io/anthropic.com', link: 'https://claude.ai/' },
+  { id: 'txt-3', name: 'Poe AI', description: 'Access multiple AI models including GPT-4 and Claude in one place.', category: 'Text', isFree: true, image: 'https://unavatar.io/poe.com', link: 'https://poe.com/' },
+  { id: 'txt-4', name: 'Perplexity AI', description: 'AI-powered search engine that provides direct answers with citations.', category: 'Text', isFree: true, image: 'https://unavatar.io/perplexity.ai', link: 'https://www.perplexity.ai/' },
+  { id: 'txt-5', name: 'YouChat', description: 'AI search assistant that helps you find answers and create content.', category: 'Text', isFree: true, image: 'https://unavatar.io/you.com', link: 'https://you.com/' },
+  { id: 'txt-6', name: 'Copy.ai', description: 'AI writing assistant for marketing copy and content creation.', category: 'Text', isFree: true, image: 'https://unavatar.io/copy.ai', link: 'https://www.copy.ai/' },
+  { id: 'txt-7', name: 'Jasper AI', description: 'Advanced AI content platform for teams and businesses.', category: 'Text', isFree: true, image: 'https://unavatar.io/jasper.ai', link: 'https://www.jasper.ai/' },
+  { id: 'txt-8', name: 'Writesonic', description: 'AI writer for creating SEO-friendly content and marketing materials.', category: 'Text', isFree: true, image: 'https://unavatar.io/writesonic.com', link: 'https://writesonic.com/' },
+  { id: 'txt-9', name: 'Grammarly AI', description: 'AI-powered writing assistant that helps you write clearly and effectively.', category: 'Text', isFree: true, image: 'https://unavatar.io/grammarly.com', link: 'https://www.grammarly.com/' },
+  { id: 'txt-10', name: 'AI Dungeon', description: 'Infinite AI-generated text adventure game.', category: 'Text', isFree: true, image: 'https://unavatar.io/aidungeon.io', link: 'https://play.aidungeon.io/' },
 
   // Productivity AI
-  { id: 'prod-1', name: 'Notion AI', description: 'AI-powered workspace for notes, docs, and project management.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/notion/800/600', link: 'https://www.notion.so/product/ai' },
-  { id: 'prod-2', name: 'Mem AI', description: 'The world’s first AI-powered self-organizing workspace.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/mem/800/600', link: 'https://get.mem.ai/' },
-  { id: 'prod-3', name: 'Tactiq AI', description: 'AI-powered meeting transcription and summary tool.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/tactiq/800/600', link: 'https://tactiq.io/' },
-  { id: 'prod-4', name: 'Gamma AI', description: 'Create presentations, websites, and docs in seconds with AI.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/gamma/800/600', link: 'https://gamma.app/' },
-  { id: 'prod-5', name: 'Simplified AI', description: 'All-in-one creative suite with AI writing, design, and video tools.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/simplified/800/600', link: 'https://simplified.com/' },
-  { id: 'prod-6', name: 'Otter.ai', description: 'AI-powered meeting notes and real-time transcription.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/otter/800/600', link: 'https://otter.ai/' },
-  { id: 'prod-7', name: 'Fireflies AI', description: 'AI meeting assistant that records, transcribes, and searches conversations.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/fireflies/800/600', link: 'https://fireflies.ai/' },
-  { id: 'prod-8', name: 'Scribe AI', description: 'Automatically create step-by-step guides and documentation with AI.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/scribe/800/600', link: 'https://scribehow.com/' },
-  { id: 'prod-9', name: 'TextCortex', description: 'Personal AI assistant for all your writing and productivity needs.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/textcortex/800/600', link: 'https://textcortex.com/' },
-  { id: 'prod-10', name: 'ChatSonic', description: 'AI chatbot for content creation, search, and productivity.', category: 'Productivity', isFree: true, image: 'https://picsum.photos/seed/chatsonic/800/600', link: 'https://writesonic.com/chat' },
+  { id: 'prod-1', name: 'Notion AI', description: 'AI-powered workspace for notes, docs, and project management.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/notion.so', link: 'https://www.notion.so/product/ai' },
+  { id: 'prod-2', name: 'Mem AI', description: 'The world’s first AI-powered self-organizing workspace.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/mem.ai', link: 'https://get.mem.ai/' },
+  { id: 'prod-3', name: 'Tactiq AI', description: 'AI-powered meeting transcription and summary tool.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/tactiq.io', link: 'https://tactiq.io/' },
+  { id: 'prod-4', name: 'Gamma AI', description: 'Create presentations, websites, and docs in seconds with AI.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/gamma.app', link: 'https://gamma.app/' },
+  { id: 'prod-5', name: 'Simplified AI', description: 'All-in-one creative suite with AI writing, design, and video tools.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/simplified.com', link: 'https://simplified.com/' },
+  { id: 'prod-6', name: 'Otter.ai', description: 'AI-powered meeting notes and real-time transcription.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/otter.ai', link: 'https://otter.ai/' },
+  { id: 'prod-7', name: 'Fireflies AI', description: 'AI meeting assistant that records, transcribes, and searches conversations.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/fireflies.ai', link: 'https://fireflies.ai/' },
+  { id: 'prod-8', name: 'Scribe AI', description: 'Automatically create step-by-step guides and documentation with AI.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/scribehow.com', link: 'https://scribehow.com/' },
+  { id: 'prod-9', name: 'TextCortex', description: 'Personal AI assistant for all your writing and productivity needs.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/textcortex.com', link: 'https://textcortex.com/' },
+  { id: 'prod-10', name: 'ChatSonic', description: 'AI chatbot for content creation, search, and productivity.', category: 'Productivity', isFree: true, image: 'https://unavatar.io/writesonic.com', link: 'https://writesonic.com/chat' },
 
   // Misc/Utilities
-  { id: 'misc-1', name: 'RunDiffusion', description: 'Cloud-based platform for running Stable Diffusion and other AI models.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/rundiffusion/800/600', link: 'https://www.rundiffusion.com/' },
-  { id: 'misc-2', name: 'DeepL', description: 'The world’s most accurate AI-powered translator.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/deepl/800/600', link: 'https://www.deepl.com/translator' },
-  { id: 'misc-3', name: 'Soundraw', description: 'AI music generator for creators to produce unique, royalty-free music.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/soundraw/800/600', link: 'https://soundraw.io/' },
-  { id: 'misc-4', name: 'AIVA', description: 'AI music composer for creating emotional soundtracks.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/aiva/800/600', link: 'https://www.aiva.ai/' },
-  { id: 'misc-5', name: 'Beatoven', description: 'AI-powered royalty-free music generator for video creators.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/beatoven/800/600', link: 'https://www.beatoven.ai/' },
-  { id: 'misc-6', name: 'CopyMonkey', description: 'AI-powered Amazon listing optimization tool.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/copymonkey/800/600', link: 'https://copymonkey.ai/' },
-  { id: 'misc-7', name: 'Unbounce AI', description: 'AI-powered landing page builder and optimization platform.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/unbounce/800/600', link: 'https://unbounce.com/' },
-  { id: 'misc-8', name: 'Tome AI', description: 'AI-powered storytelling and presentation platform.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/tome/800/600', link: 'https://tome.app/' },
-  { id: 'misc-9', name: 'Inkforall', description: 'AI-powered SEO writing and content marketing platform.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/ink/800/600', link: 'https://inkforall.com/' },
-  { id: 'misc-10', name: 'Lensa AI', description: 'AI-powered photo editor and avatar generator.', category: 'Misc', isFree: true, image: 'https://picsum.photos/seed/lensa/800/600', link: 'https://prisma-ai.com/lensa' },
+  { id: 'misc-1', name: 'RunDiffusion', description: 'Cloud-based platform for running Stable Diffusion and other AI models.', category: 'Misc', isFree: true, image: 'https://unavatar.io/rundiffusion.com', link: 'https://www.rundiffusion.com/' },
+  { id: 'misc-2', name: 'DeepL', description: 'The world’s most accurate AI-powered translator.', category: 'Misc', isFree: true, image: 'https://unavatar.io/deepl.com', link: 'https://www.deepl.com/translator' },
+  { id: 'misc-3', name: 'Soundraw', description: 'AI music generator for creators to produce unique, royalty-free music.', category: 'Audio', isFree: true, image: 'https://unavatar.io/soundraw.io', link: 'https://soundraw.io/' },
+  { id: 'misc-4', name: 'AIVA', description: 'AI music composer for creating emotional soundtracks.', category: 'Audio', isFree: true, image: 'https://unavatar.io/aiva.ai', link: 'https://www.aiva.ai/' },
+  { id: 'misc-5', name: 'Beatoven', description: 'AI-powered royalty-free music generator for video creators.', category: 'Audio', isFree: true, image: 'https://unavatar.io/beatoven.ai', link: 'https://www.beatoven.ai/' },
+  { id: 'misc-6', name: 'CopyMonkey', description: 'AI-powered Amazon listing optimization tool.', category: 'Misc', isFree: true, image: 'https://unavatar.io/copymonkey.ai', link: 'https://copymonkey.ai/' },
+  { id: 'misc-7', name: 'Unbounce AI', description: 'AI-powered landing page builder and optimization platform.', category: 'Misc', isFree: true, image: 'https://unavatar.io/unbounce.com', link: 'https://unbounce.com/' },
+  { id: 'misc-8', name: 'Tome AI', description: 'AI-powered storytelling and presentation platform.', category: 'Misc', isFree: true, image: 'https://unavatar.io/tome.app', link: 'https://tome.app/' },
+  { id: 'misc-9', name: 'Inkforall', description: 'AI-powered SEO writing and content marketing platform.', category: 'Misc', isFree: true, image: 'https://unavatar.io/inkforall.com', link: 'https://inkforall.com/' },
+  { id: 'misc-10', name: 'Lensa AI', description: 'AI-powered photo editor and avatar generator.', category: 'Misc', isFree: true, image: 'https://unavatar.io/prisma-ai.com', link: 'https://prisma-ai.com/lensa' },
 ];
 
 export const PROMPTS: AIPrompt[] = [
@@ -167,7 +167,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Adobe Firefly',
     description: 'Strong image & emerging video generation, commercial-safe creative models.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/adobe/200/200',
+    logo: 'https://unavatar.io/adobe.com',
     link: 'https://www.adobe.com/sensei/generative-ai/firefly.html'
   },
   {
@@ -175,7 +175,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Runway',
     description: 'Advanced text-to-video and image models (Gen-3/Gen-4 quality). High quality and cinematic outputs.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/runway/200/200',
+    logo: 'https://unavatar.io/runwayml.com',
     link: 'https://runwayml.com/'
   },
   {
@@ -183,7 +183,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'OpenAI Sora',
     description: 'Cutting-edge story-capable video generation within the OpenAI ecosystem.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/openai/200/200',
+    logo: 'https://unavatar.io/openai.com',
     link: 'https://openai.com/sora'
   },
   {
@@ -191,7 +191,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Google Veo',
     description: 'High-detail, cinematic video generation (Imagen Video technology).',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/google/200/200',
+    logo: 'https://unavatar.io/google.com',
     link: 'https://deepmind.google/technologies/veo/'
   },
   {
@@ -199,7 +199,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Higgsfield AI',
     description: 'Cinematic video generation with dynamic camera and movement controls.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/higgsfield/200/200',
+    logo: 'https://unavatar.io/higgsfield.ai',
     link: 'https://higgsfield.ai/'
   },
   {
@@ -207,7 +207,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Synthesia',
     description: 'AI video with realistic avatars and voice across languages.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/synthesia/200/200',
+    logo: 'https://unavatar.io/synthesia.io',
     link: 'https://www.synthesia.io/'
   },
   {
@@ -215,7 +215,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Midjourney',
     description: 'One of the most widely used premium image generators for photorealistic imagery.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/midjourney/200/200',
+    logo: 'https://unavatar.io/midjourney.com',
     link: 'https://www.midjourney.com/'
   },
   {
@@ -223,7 +223,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Stability AI',
     description: 'Trusted high-quality image models (Stable Diffusion) with a strong ecosystem.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/stability/200/200',
+    logo: 'https://unavatar.io/stability.ai',
     link: 'https://stability.ai/'
   },
   {
@@ -231,7 +231,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Pika Labs',
     description: 'Fast, high-quality video output suitable for social and quick cinematic clips.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/pika/200/200',
+    logo: 'https://unavatar.io/pika.art',
     link: 'https://pika.art/'
   },
   {
@@ -239,7 +239,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Kling AI',
     description: 'Advanced animated and generative video capabilities with motion realism.',
     type: 'Premium',
-    logo: 'https://picsum.photos/seed/kling/200/200',
+    logo: 'https://unavatar.io/klingai.com',
     link: 'https://klingai.com/'
   },
   {
@@ -247,7 +247,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Hugging Face',
     description: 'The community home for open-source AI models, datasets, and demo apps.',
     type: 'Free/Open',
-    logo: 'https://picsum.photos/seed/hf/200/200',
+    logo: 'https://unavatar.io/huggingface.co',
     link: 'https://huggingface.co/'
   },
   {
@@ -255,7 +255,7 @@ export const PROVIDERS: AIProvider[] = [
     name: 'Civitai',
     description: 'The largest platform for Stable Diffusion models and creative AI assets.',
     type: 'Free/Open',
-    logo: 'https://picsum.photos/seed/civitai/200/200',
+    logo: 'https://unavatar.io/civitai.com',
     link: 'https://civitai.com/'
   }
 ];

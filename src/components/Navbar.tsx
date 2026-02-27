@@ -13,6 +13,7 @@ const NAV_LINKS = [
     dropdown: [
       { name: 'Image Generators', path: '/tools?cat=Image' },
       { name: 'Video Generators', path: '/tools?cat=Video' },
+      { name: 'Audio Generators', path: '/tools?cat=Audio' },
       { name: 'Text Assistants', path: '/tools?cat=Text' },
       { name: 'Productivity', path: '/tools?cat=Productivity' },
       { name: 'Misc/Utilities', path: '/tools?cat=Misc' },

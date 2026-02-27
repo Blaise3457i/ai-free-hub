@@ -6,7 +6,7 @@ import { ProviderCard } from '../components/ProviderCard';
 import { TOOLS, PROVIDERS } from '../data/mockData';
 import { useSearchParams } from 'react-router-dom';
 
-const CATEGORIES = ['All', 'Image', 'Video', 'Text', 'Productivity', 'Misc'];
+const CATEGORIES = ['All', 'Image', 'Video', 'Audio', 'Text', 'Productivity', 'Misc'];
 
 export function Tools() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,6 +23,16 @@ export function Tools() {
       return matchesSearch && matchesCategory;
     });
   }, [searchQuery, activeCategory]);
+
+  const filteredProviders = useMemo(() => {
+    if (!searchQuery) return PROVIDERS;
+    const q = searchQuery.toLowerCase();
+    return PROVIDERS.filter(provider => 
+      provider.name.toLowerCase().includes(q) || 
+      provider.description.toLowerCase().includes(q) ||
+      provider.type.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   return (
     <div className="pt-32 pb-24 min-h-screen">
@@ -93,30 +103,38 @@ export function Tools() {
         </div>
 
         {/* AI Providers Section */}
-        <section className="mt-32 py-24 bg-slate-50/50 dark:bg-slate-900/20 rounded-[3rem] border border-slate-100 dark:border-slate-800/50 px-8 lg:px-16">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-purple-50 dark:bg-purple-900/30 px-4 py-2 rounded-full mb-6">
-              <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Trusted Infrastructure</span>
+        {(filteredProviders.length > 0 || !searchQuery) && (
+          <section className="mt-32 py-24 bg-slate-50/50 dark:bg-slate-900/20 rounded-[3rem] border border-slate-100 dark:border-slate-800/50 px-8 lg:px-16">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center space-x-2 bg-purple-50 dark:bg-purple-900/30 px-4 py-2 rounded-full mb-6">
+                <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Trusted Infrastructure</span>
+              </div>
+              <h2 className="text-3xl lg:text-5xl font-black text-slate-900 dark:text-white mb-6">
+                {searchQuery ? 'Matching AI Providers' : 'High-Quality AI Providers'}
+              </h2>
+              <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+                {searchQuery 
+                  ? `Found ${filteredProviders.length} providers matching your search.`
+                  : 'Top-tier services known for professional image and video generation quality.'}
+              </p>
             </div>
-            <h2 className="text-3xl lg:text-5xl font-black text-slate-900 dark:text-white mb-6">High-Quality AI Providers</h2>
-            <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-              Top-tier services known for professional image and video generation quality.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {PROVIDERS.map(provider => (
-              <ProviderCard key={provider.id} provider={provider} />
-            ))}
-          </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {filteredProviders.map(provider => (
+                <ProviderCard key={provider.id} provider={provider} />
+              ))}
+            </div>
 
-          <div className="mt-16 p-10 bg-white dark:bg-slate-800/50 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 text-center shadow-xl shadow-slate-200/20 dark:shadow-none">
-            <p className="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto italic text-lg leading-relaxed">
-              "These providers are known for high detail, professional outputs — often used in marketing, creative industries, and professional content creation workflows. Many offer APIs for integration."
-            </p>
-          </div>
-        </section>
+            {!searchQuery && (
+              <div className="mt-16 p-10 bg-white dark:bg-slate-800/50 rounded-[2.5rem] border border-slate-100 dark:border-slate-700/50 text-center shadow-xl shadow-slate-200/20 dark:shadow-none">
+                <p className="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto italic text-lg leading-relaxed">
+                  "These providers are known for high detail, professional outputs — often used in marketing, creative industries, and professional content creation workflows. Many offer APIs for integration."
+                </p>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* SEO FAQ Section */}
         <section className="mt-32 mb-24">

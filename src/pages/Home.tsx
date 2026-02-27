@@ -16,11 +16,11 @@ const HERO_VIDEOS = [
 export function Home() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
-  const toolCategories = ['Text', 'Video', 'Image', 'Productivity'];
+  const toolCategories = ['Text', 'Video', 'Image', 'Audio', 'Productivity'];
   
   const toolsByCategory = useMemo(() => {
     return toolCategories.map(cat => ({
-      name: cat === 'Text' ? 'Text Generators' : cat === 'Video' ? 'Video Generators' : cat === 'Image' ? 'Image Generators' : cat,
+      name: cat === 'Text' ? 'Text Generators' : cat === 'Video' ? 'Video Generators' : cat === 'Image' ? 'Image Generators' : cat === 'Audio' ? 'Audio Generators' : cat,
       tools: TOOLS.filter(tool => tool.category === cat).slice(0, 5)
     }));
   }, []);

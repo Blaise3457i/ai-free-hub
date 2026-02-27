@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ExternalLink, ShieldCheck, Globe } from 'lucide-react';
+import { ExternalLink, ShieldCheck, Globe, Building2 } from 'lucide-react';
 import { AIProvider } from '../types';
 
 interface ProviderCardProps {
@@ -7,6 +8,8 @@ interface ProviderCardProps {
 }
 
 export function ProviderCard({ provider }: ProviderCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -15,13 +18,18 @@ export function ProviderCard({ provider }: ProviderCardProps) {
       className="group relative bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 p-6 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500"
     >
       <div className="flex items-start justify-between mb-6">
-        <div className="w-16 h-16 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
-          <img 
-            src={provider.logo} 
-            alt={provider.name} 
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            referrerPolicy="no-referrer"
-          />
+        <div className="w-16 h-16 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-2">
+          {!imageError ? (
+            <img 
+              src={provider.logo} 
+              alt={provider.name} 
+              className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
+              referrerPolicy="no-referrer"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <Building2 className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+          )}
         </div>
         <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
           provider.type === 'Premium' 

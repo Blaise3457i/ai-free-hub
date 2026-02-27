@@ -2,7 +2,7 @@ export interface AITool {
   id: string;
   name: string;
   description: string;
-  category: 'Image' | 'Video' | 'Text' | 'Productivity' | 'Misc';
+  category: 'Image' | 'Video' | 'Audio' | 'Text' | 'Productivity' | 'Misc';
   isFree: boolean;
   image: string;
   link: string;
@@ -11,7 +11,7 @@ export interface AITool {
 export interface AIPrompt {
   id: string;
   text: string;
-  category: 'Text' | 'Image' | 'Video';
+  category: 'Text' | 'Image' | 'Video' | 'Audio';
   badge: string;
   outputImage?: string;
 }

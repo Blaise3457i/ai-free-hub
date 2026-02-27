@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ExternalLink, Star } from 'lucide-react';
+import { ExternalLink, Star, Image as ImageIcon } from 'lucide-react';
 import { AITool } from '../types';
 
 interface ToolCardProps {
@@ -7,20 +8,32 @@ interface ToolCardProps {
 }
 
 export function ToolCard({ tool }: ToolCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
       className="group bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
     >
-      <div className="aspect-video relative overflow-hidden">
-        <img 
-          src={tool.image} 
-          alt={tool.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          referrerPolicy="no-referrer"
-        />
+      <div className="aspect-video relative overflow-hidden bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-6">
+        {!imageError ? (
+          <img 
+            src={tool.image} 
+            alt={tool.name}
+            className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
+            referrerPolicy="no-referrer"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600">
+            <div className="w-16 h-16 rounded-2xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center mb-2">
+              <ImageIcon className="w-8 h-8" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Logo Missing</span>
+          </div>
+        )}
         <div className="absolute top-3 right-3">
-          <span className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full text-purple-600 dark:text-purple-400 shadow-sm">
+          <span className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full text-purple-600 dark:text-purple-400 shadow-sm border border-slate-100 dark:border-slate-700">
             {tool.isFree ? 'FREE' : 'FREEMIUM'}
           </span>
         </div>
