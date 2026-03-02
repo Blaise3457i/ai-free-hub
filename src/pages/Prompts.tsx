@@ -1,17 +1,34 @@
-import { useState, useMemo } from 'react';
-import { Sparkles, TrendingUp } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Sparkles, TrendingUp, Loader2 } from 'lucide-react';
 import { PromptCard } from '../components/PromptCard';
 import { SearchBar } from '../components/SearchBar';
-import { PROMPTS } from '../data/mockData';
+import { useSearchParams } from 'react-router-dom';
 
 const CATEGORIES = ['All', 'Image', 'Text', 'Video'];
 
 export function Prompts() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [prompts, setPrompts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All');
 
+  useEffect(() => {
+    const fetchPrompts = async () => {
+      try {
+        const response = await fetch('/api/prompts');
+        const data = await response.json();
+        setPrompts(data);
+      } catch (err) {
+        console.error('Failed to fetch prompts', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPrompts();
+  }, []);
+
   const filteredPrompts = useMemo(() => {
-    return PROMPTS.filter(prompt => {
+    return prompts.filter(prompt => {
       const q = searchQuery.toLowerCase();
       const matchesSearch = prompt.text.toLowerCase().includes(q) ||
                            prompt.category.toLowerCase().includes(q) ||
@@ -19,7 +36,7 @@ export function Prompts() {
       const matchesCategory = activeCategory === 'All' || prompt.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, activeCategory]);
+  }, [searchQuery, activeCategory, prompts]);
 
   return (
     <div className="pt-32 pb-24 min-h-screen">
@@ -45,7 +62,7 @@ export function Prompts() {
             <h2 className="text-xl font-bold dark:text-white">Trending Now</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {PROMPTS.slice(0, 3).map(prompt => (
+            {prompts.slice(0, 3).map(prompt => (
               <PromptCard key={prompt.id} prompt={prompt} />
             ))}
           </div>
@@ -73,7 +90,11 @@ export function Prompts() {
         </div>
 
         {/* Grid */}
-        {filteredPrompts.length > 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 animate-spin text-purple-600" />
+          </div>
+        ) : filteredPrompts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPrompts.map(prompt => (
               <PromptCard key={prompt.id} prompt={prompt} />

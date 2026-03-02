@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
-import { Search, Filter, SlidersHorizontal, ShieldCheck } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Search, Filter, SlidersHorizontal, ShieldCheck, Loader2 } from 'lucide-react';
 import { ToolCard } from '../components/ToolCard';
 import { SearchBar } from '../components/SearchBar';
 import { ProviderCard } from '../components/ProviderCard';
-import { TOOLS, PROVIDERS } from '../data/mockData';
+import { PROVIDERS } from '../data/mockData';
 import { useSearchParams } from 'react-router-dom';
 
 const CATEGORIES = ['All', 'Image', 'Video', 'Audio', 'Text', 'Productivity', 'Misc'];
@@ -11,10 +11,27 @@ const CATEGORIES = ['All', 'Image', 'Video', 'Audio', 'Text', 'Productivity', 'M
 export function Tools() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
+  const [tools, setTools] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const activeCategory = searchParams.get('cat') || 'All';
 
+  useEffect(() => {
+    const fetchTools = async () => {
+      try {
+        const response = await fetch('/api/tools');
+        const data = await response.json();
+        setTools(data);
+      } catch (err) {
+        console.error('Failed to fetch tools', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTools();
+  }, []);
+
   const filteredTools = useMemo(() => {
-    return TOOLS.filter(tool => {
+    return tools.filter(tool => {
       const q = searchQuery.toLowerCase();
       const matchesSearch = tool.name.toLowerCase().includes(q) || 
                            tool.description.toLowerCase().includes(q) ||
@@ -22,7 +39,7 @@ export function Tools() {
       const matchesCategory = activeCategory === 'All' || tool.category === activeCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, activeCategory]);
+  }, [searchQuery, activeCategory, tools]);
 
   const filteredProviders = useMemo(() => {
     if (!searchQuery) return PROVIDERS;
@@ -75,7 +92,11 @@ export function Tools() {
         </div>
 
         {/* Grid */}
-        {filteredTools.length > 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 animate-spin text-purple-600" />
+          </div>
+        ) : filteredTools.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {filteredTools.map(tool => (
               <ToolCard key={tool.id} tool={tool} />

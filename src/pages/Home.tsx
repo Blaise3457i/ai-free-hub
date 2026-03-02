@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Sparkles, Zap, Shield, Globe, Play } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap, Shield, Globe, Play, Loader2 } from 'lucide-react';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ToolCard } from '../components/ToolCard';
 import { SearchBar } from '../components/SearchBar';
 import { PromptCard } from '../components/PromptCard';
 import { TutorialCard } from '../components/TutorialCard';
-import { TOOLS, PROMPTS, TUTORIALS } from '../data/mockData';
+import { TUTORIALS } from '../data/mockData';
 
 const HERO_VIDEOS = [
   'https://cdn.pixabay.com/video/2023/10/20/185834-876356710_large.mp4',
@@ -15,19 +15,54 @@ const HERO_VIDEOS = [
 
 export function Home() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [tools, setTools] = useState<any[]>([]);
+  const [prompts, setPrompts] = useState<any[]>([]);
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [toolsRes, promptsRes, settingsRes] = await Promise.all([
+          fetch('/api/tools'),
+          fetch('/api/prompts'),
+          fetch('/api/admin/settings') // This might fail if not admin, but we can make a public settings route if needed. For now, let's assume it's public or handle error.
+        ]);
+        
+        const toolsData = await toolsRes.json();
+        const promptsData = await promptsRes.json();
+        
+        setTools(toolsData);
+        setPrompts(promptsData);
+
+        if (settingsRes.ok) {
+          const settingsData = await settingsRes.json();
+          const settingsMap: Record<string, string> = {};
+          settingsData.forEach((s: any) => settingsMap[s.key] = s.value);
+          setSettings(settingsMap);
+        }
+      } catch (err) {
+        console.error('Failed to fetch home data', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const toolCategories = ['Text', 'Video', 'Image', 'Audio', 'Productivity'];
   
   const toolsByCategory = useMemo(() => {
     return toolCategories.map(cat => ({
       name: cat === 'Text' ? 'Text Generators' : cat === 'Video' ? 'Video Generators' : cat === 'Image' ? 'Image Generators' : cat === 'Audio' ? 'Audio Generators' : cat,
-      tools: TOOLS.filter(tool => tool.category === cat).slice(0, 5)
+      tools: tools.filter(tool => tool.category === cat).slice(0, 5)
     }));
-  }, []);
+  }, [tools]);
 
   const featuredPrompts = useMemo(() => {
-    return PROMPTS.slice(0, 5);
-  }, []);
+    return prompts.slice(0, 6);
+  }, [prompts]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -83,12 +118,23 @@ export function Home() {
             </div>
             
             <h1 className="text-5xl md:text-7xl lg:text-9xl font-black text-white mb-8 leading-[0.95] tracking-tighter drop-shadow-[0_10px_30px_rgba(0,0,0,1)]">
-              Discover Free <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00D4FF] to-[#7B2CFF] drop-shadow-[0_0_50px_rgba(0,212,255,0.8)]">AI Tools</span> & Prompts
+              {settings.hero_title ? (
+                <>
+                  {settings.hero_title.split(' ').slice(0, 2).join(' ')} <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00D4FF] to-[#7B2CFF] drop-shadow-[0_0_50px_rgba(0,212,255,0.8)]">
+                    {settings.hero_title.split(' ').slice(2, 4).join(' ')}
+                  </span> {settings.hero_title.split(' ').slice(4).join(' ')}
+                </>
+              ) : (
+                <>
+                  Discover Free <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00D4FF] to-[#7B2CFF] drop-shadow-[0_0_50px_rgba(0,212,255,0.8)]">AI Tools</span> & Prompts
+                </>
+              )}
             </h1>
 
             <p className="text-base lg:text-2xl text-white mb-12 max-w-[800px] mx-auto leading-relaxed font-semibold drop-shadow-[0_5px_20px_rgba(0,0,0,1)]">
-              Unlock the power of artificial intelligence without breaking the bank. Access our curated library of free tools, expert prompts, and step-by-step tutorials.
+              {settings.hero_subtitle || "Unlock the power of artificial intelligence without breaking the bank. Access our curated library of free tools, expert prompts, and step-by-step tutorials."}
             </p>
 
             <div className="mb-16 px-4">
