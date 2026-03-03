@@ -23,6 +23,8 @@ export function AdminPrompts() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPrompt, setEditingPrompt] = useState<AIPrompt | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -81,10 +83,13 @@ export function AdminPrompts() {
       });
     }
     setIsModalOpen(true);
+    setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
+    setError(null);
 
     try {
       if (editingPrompt) {
@@ -96,8 +101,11 @@ export function AdminPrompts() {
       }
       setIsModalOpen(false);
       fetchPrompts();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to save prompt', err);
+      setError(err.message || 'Failed to save prompt. Please check your connection.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -246,6 +254,11 @@ export function AdminPrompts() {
             </div>
             
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              {error && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Prompt Text</label>
                 <textarea 
@@ -329,8 +342,10 @@ export function AdminPrompts() {
                 </button>
                 <button 
                   type="submit"
-                  className="px-8 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                  disabled={saving}
+                  className="px-8 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                 >
+                  {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                   {editingPrompt ? 'Update Prompt' : 'Create Prompt'}
                 </button>
               </div>

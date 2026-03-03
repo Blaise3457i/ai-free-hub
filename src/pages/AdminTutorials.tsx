@@ -24,6 +24,8 @@ export function AdminTutorials() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTutorial, setEditingTutorial] = useState<Tutorial | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -85,10 +87,13 @@ export function AdminTutorials() {
       });
     }
     setIsModalOpen(true);
+    setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSaving(true);
+    setError(null);
 
     try {
       if (editingTutorial) {
@@ -100,8 +105,11 @@ export function AdminTutorials() {
       }
       setIsModalOpen(false);
       fetchTutorials();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to save tutorial', err);
+      setError(err.message || 'Failed to save tutorial. Please check your connection.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -250,6 +258,11 @@ export function AdminTutorials() {
             </div>
             
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              {error && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="col-span-full space-y-2">
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Tutorial Title</label>
@@ -339,8 +352,10 @@ export function AdminTutorials() {
                 </button>
                 <button 
                   type="submit"
-                  className="px-8 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-500/20 active:scale-95"
+                  disabled={saving}
+                  className="px-8 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-purple-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                 >
+                  {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                   {editingTutorial ? 'Update Tutorial' : 'Create Tutorial'}
                 </button>
               </div>
