@@ -99,12 +99,20 @@ export function AdminTools() {
     setError(null);
 
     try {
+      const cleanedData = {
+        ...formData,
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        link: formData.link.trim(),
+        image: formData.image.trim()
+      };
+
       if (editingTool) {
         const toolDoc = doc(db, 'tools', editingTool.id);
-        await updateDoc(toolDoc, formData);
+        await updateDoc(toolDoc, cleanedData);
       } else {
         const toolsCollection = collection(db, 'tools');
-        await addDoc(toolsCollection, formData);
+        await addDoc(toolsCollection, cleanedData);
       }
       setIsModalOpen(false);
       fetchTools();

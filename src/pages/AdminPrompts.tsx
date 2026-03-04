@@ -92,12 +92,19 @@ export function AdminPrompts() {
     setError(null);
 
     try {
+      const cleanedData = {
+        ...formData,
+        text: formData.text.trim(),
+        badge: formData.badge.trim(),
+        outputImage: formData.outputImage.trim()
+      };
+
       if (editingPrompt) {
         const promptDoc = doc(db, 'prompts', editingPrompt.id);
-        await updateDoc(promptDoc, formData);
+        await updateDoc(promptDoc, cleanedData);
       } else {
         const promptsCollection = collection(db, 'prompts');
-        await addDoc(promptsCollection, formData);
+        await addDoc(promptsCollection, cleanedData);
       }
       setIsModalOpen(false);
       fetchPrompts();

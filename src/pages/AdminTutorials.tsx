@@ -96,12 +96,19 @@ export function AdminTutorials() {
     setError(null);
 
     try {
+      const cleanedData = {
+        ...formData,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        thumbnail: formData.thumbnail.trim()
+      };
+
       if (editingTutorial) {
         const tutorialDoc = doc(db, 'tutorials', editingTutorial.id);
-        await updateDoc(tutorialDoc, formData);
+        await updateDoc(tutorialDoc, cleanedData);
       } else {
         const tutorialsCollection = collection(db, 'tutorials');
-        await addDoc(tutorialsCollection, formData);
+        await addDoc(tutorialsCollection, cleanedData);
       }
       setIsModalOpen(false);
       fetchTutorials();

@@ -10,19 +10,24 @@ interface ToolCardProps {
 export function ToolCard({ tool }: ToolCardProps) {
   const [imageError, setImageError] = useState(false);
 
+  const handleImageError = () => {
+    console.warn(`Failed to load image for ${tool.name}: ${tool.image}`);
+    setImageError(true);
+  };
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
       className="group bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
     >
       <div className="aspect-video relative overflow-hidden bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-6">
-        {!imageError ? (
+        {!imageError && tool.image ? (
           <img 
             src={tool.image} 
             alt={tool.name}
             className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
-            referrerPolicy="no-referrer"
-            onError={() => setImageError(true)}
+            onError={handleImageError}
+            loading="lazy"
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600">

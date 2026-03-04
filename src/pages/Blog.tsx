@@ -54,7 +54,7 @@ export function Blog() {
               <div className="mb-20">
                 <div className="relative aspect-[21/9] rounded-[2.5rem] overflow-hidden group cursor-pointer">
                   <img 
-                    src={featuredPost.thumbnail} 
+                    src={featuredPost.thumbnail || "/placeholder.jpg"} 
                     alt={featuredPost.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     referrerPolicy="no-referrer"
