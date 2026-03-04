@@ -24,6 +24,13 @@ interface Stats {
   prompts: number;
   blog: number;
   tutorials: number;
+  todayViews: number;
+  totalViews: number;
+}
+
+interface PageStat {
+  path: string;
+  views: number;
 }
 
 interface Activity {
@@ -37,24 +44,37 @@ export function AdminDashboard() {
   const navigate = useNavigate();
   const [stats, setStats] = useState<Stats | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [pageStats, setPageStats] = useState<PageStat[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [toolsCount, promptsCount, blogsCount, tutorialsCount] = await Promise.all([
+        const today = new Date().toISOString().split('T')[0];
+        
+        const [toolsCount, promptsCount, blogsCount, tutorialsCount, dailySnap, globalSnap, pagesSnap] = await Promise.all([
           getCountFromServer(collection(db, 'tools')).catch(e => { console.warn('Tools count inaccessible', e); return { data: () => ({ count: 0 }) }; }),
           getCountFromServer(collection(db, 'prompts')).catch(e => { console.warn('Prompts count inaccessible', e); return { data: () => ({ count: 0 }) }; }),
           getCountFromServer(collection(db, 'blogs')).catch(e => { console.warn('Blogs count inaccessible', e); return { data: () => ({ count: 0 }) }; }),
-          getCountFromServer(collection(db, 'tutorials')).catch(e => { console.warn('Tutorials count inaccessible', e); return { data: () => ({ count: 0 }) }; })
+          getCountFromServer(collection(db, 'tutorials')).catch(e => { console.warn('Tutorials count inaccessible', e); return { data: () => ({ count: 0 }) }; }),
+          getDocs(query(collection(db, 'analytics_daily'), orderBy('date', 'desc'), limit(1))).catch(() => ({ docs: [] })),
+          getDocs(collection(db, 'analytics_global')).catch(() => ({ docs: [] })),
+          getDocs(query(collection(db, 'analytics_pages'), orderBy('views', 'desc'), limit(5))).catch(() => ({ docs: [] }))
         ]);
         
+        const todayViews = (dailySnap as any).docs.find((d: any) => d.id === today)?.data()?.views || 0;
+        const totalViews = (globalSnap as any).docs[0]?.data()?.totalViews || 0;
+
         setStats({
           tools: (toolsCount as any).data().count,
           prompts: (promptsCount as any).data().count,
           blog: (blogsCount as any).data().count,
-          tutorials: (tutorialsCount as any).data().count
+          tutorials: (tutorialsCount as any).data().count,
+          todayViews,
+          totalViews
         });
+
+        setPageStats((pagesSnap as any).docs.map((doc: any) => doc.data()));
 
         // Fetch recent activities
         try {
@@ -89,10 +109,10 @@ export function AdminDashboard() {
   }
 
   const STAT_CARDS = [
-    { name: 'Total AI Tools', value: stats?.tools || 0, icon: Wrench, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20', trend: '+12%', up: true },
-    { name: 'Active Prompts', value: stats?.prompts || 0, icon: MessageSquare, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20', trend: '+5%', up: true },
-    { name: 'Tutorials', value: stats?.tutorials || 0, icon: BookOpen, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-900/20', trend: '+8%', up: true },
-    { name: 'Blog Articles', value: stats?.blog || 0, icon: FileText, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20', trend: '-2%', up: false },
+    { name: 'Today\'s Views', value: stats?.todayViews || 0, icon: Eye, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-900/20', trend: 'Live', up: true },
+    { name: 'Total Views', value: stats?.totalViews || 0, icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20', trend: 'Total', up: true },
+    { name: 'AI Tools', value: stats?.tools || 0, icon: Wrench, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-900/20', trend: 'Items', up: true },
+    { name: 'Blog Articles', value: stats?.blog || 0, icon: FileText, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-900/20', trend: 'Posts', up: true },
   ];
 
   return (
@@ -123,11 +143,11 @@ export function AdminDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Activity</h2>
-            <button className="text-sm text-purple-600 font-medium hover:underline">View All</button>
+            <button onClick={() => navigate('/admin/tools')} className="text-sm text-purple-600 font-medium hover:underline">View All</button>
           </div>
           <div className="space-y-6">
             {activities.length > 0 ? activities.map((activity) => (
@@ -153,68 +173,85 @@ export function AdminDashboard() {
 
         <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Top Pages</h2>
+            <button onClick={() => navigate('/admin/analytics')} className="text-sm text-purple-600 font-medium hover:underline">Full Report</button>
+          </div>
+          <div className="space-y-6">
+            {pageStats.length > 0 ? pageStats.map((page, i) => (
+              <div key={i} className="flex items-center justify-between">
+                <div className="flex-1 min-w-0 mr-4">
+                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                    {page.path === '/' ? 'Home' : page.path}
+                  </p>
+                  <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                    <div 
+                      className="bg-purple-600 h-full rounded-full" 
+                      style={{ width: `${(page.views / pageStats[0].views) * 100}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="text-sm font-black text-slate-900 dark:text-white">
+                  {page.views.toLocaleString()}
+                </div>
+              </div>
+            )) : (
+              <p className="text-slate-500 text-sm italic">No traffic data yet.</p>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">Quick Actions</h2>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <button 
               onClick={() => navigate('/admin/tools')}
-              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group"
+              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group flex items-center space-x-4"
             >
-              <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 mb-3 group-hover:scale-110 transition-transform w-fit">
+              <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 group-hover:scale-110 transition-transform">
                 <Wrench className="w-5 h-5" />
               </div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">Add Tool</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">List a new AI tool</p>
+              <div>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">Add Tool</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">List a new AI tool</p>
+              </div>
             </button>
             <button 
               onClick={() => navigate('/admin/blog')}
-              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group"
+              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group flex items-center space-x-4"
             >
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 mb-3 group-hover:scale-110 transition-transform w-fit">
+              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 group-hover:scale-110 transition-transform">
                 <FileText className="w-5 h-5" />
               </div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">New Post</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Write a blog article</p>
+              <div>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">New Post</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Write a blog article</p>
+              </div>
             </button>
             <button 
               onClick={() => navigate('/admin/prompts')}
-              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group"
+              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group flex items-center space-x-4"
             >
-              <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 mb-3 group-hover:scale-110 transition-transform w-fit">
+              <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 group-hover:scale-110 transition-transform">
                 <MessageSquare className="w-5 h-5" />
               </div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">New Prompt</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Add a curated prompt</p>
+              <div>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">New Prompt</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Add a curated prompt</p>
+              </div>
             </button>
             <button 
-              onClick={() => navigate('/admin/tutorials')}
-              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group"
+              onClick={() => navigate('/admin/analytics')}
+              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group flex items-center space-x-4"
             >
-              <div className="p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 mb-3 group-hover:scale-110 transition-transform w-fit">
-                <BookOpen className="w-5 h-5" />
+              <div className="p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 group-hover:scale-110 transition-transform">
+                <TrendingUp className="w-5 h-5" />
               </div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">New Tutorial</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Add a step-by-step guide</p>
-            </button>
-            <button 
-              onClick={() => navigate('/admin/seo')}
-              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group"
-            >
-              <div className="p-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 mb-3 group-hover:scale-110 transition-transform w-fit">
-                <Globe className="w-5 h-5" />
+              <div>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">Full Analytics</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Detailed traffic reports</p>
               </div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">SEO Meta</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Edit site metadata</p>
-            </button>
-            <button 
-              onClick={() => navigate('/admin/media')}
-              className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left group"
-            >
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 mb-3 group-hover:scale-110 transition-transform w-fit">
-                <ImageIcon className="w-5 h-5" />
-              </div>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">My Generations</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Manage your AI assets</p>
             </button>
           </div>
         </div>
