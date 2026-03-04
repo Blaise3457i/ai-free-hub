@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Logo } from '../components/Logo';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { 
   LayoutDashboard, 
   Wrench, 
@@ -86,6 +87,10 @@ export function AdminLayout() {
         </nav>
 
         <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-4 px-4">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Theme</span>
+            <ThemeToggle />
+          </div>
           <div className="flex items-center space-x-3 px-4 py-3 mb-4">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white text-xs font-bold">
               {user?.email[0].toUpperCase()}

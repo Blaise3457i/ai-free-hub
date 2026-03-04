@@ -49,9 +49,9 @@ export function BlogPost() {
   }
 
   return (
-    <div className="pt-32 pb-24 min-h-screen">
+    <div className="pt-32 pb-24 min-h-screen bg-slate-950 text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link to="/blog" className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-purple-600 transition-colors mb-8 group">
+        <Link to="/blog" className="inline-flex items-center text-sm font-bold text-slate-400 hover:text-purple-400 transition-colors mb-8 group">
           <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
           Back to Insights
         </Link>
@@ -66,18 +66,18 @@ export function BlogPost() {
               <Calendar className="w-4 h-4 mr-2" />
               {post.date}
             </div>
-            <div className="w-1 h-1 bg-slate-300 rounded-full" />
+            <div className="w-1 h-1 bg-slate-700 rounded-full" />
             <div className="flex items-center text-slate-400 text-xs font-bold uppercase tracking-wider">
               <Clock className="w-4 h-4 mr-2" />
               5 min read
             </div>
           </div>
 
-          <h1 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-white mb-8 leading-tight">
+          <h1 className="text-4xl lg:text-6xl font-black text-white mb-8 leading-tight">
             {post.title}
           </h1>
 
-          <div className="aspect-[21/9] rounded-[2.5rem] overflow-hidden mb-12 shadow-2xl">
+          <div className="aspect-[21/9] rounded-[2.5rem] overflow-hidden mb-12 shadow-2xl ring-1 ring-white/10">
             <img 
               src={post.thumbnail || "/placeholder.jpg"} 
               alt={post.title}
@@ -86,20 +86,20 @@ export function BlogPost() {
             />
           </div>
 
-          <div className="prose prose-lg dark:prose-invert max-w-none">
+          <div className="prose prose-lg prose-invert max-w-none prose-headings:text-white prose-p:text-white prose-strong:text-white prose-li:text-white prose-code:text-purple-300 prose-pre:bg-slate-900/50 prose-pre:border prose-pre:border-white/10">
             <div className="markdown-body">
               <ReactMarkdown>{post.content || post.description}</ReactMarkdown>
             </div>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="mt-16 pt-8 border-t border-white/10 flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                <span className="text-purple-600 font-bold">N</span>
+              <div className="w-12 h-12 rounded-full bg-purple-900/30 flex items-center justify-center ring-1 ring-purple-500/20">
+                <span className="text-purple-400 font-bold">N</span>
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">Neural Team</p>
-                <p className="text-xs text-slate-500">AI Research & Editorial</p>
+                <p className="text-sm font-bold text-white">Neural Team</p>
+                <p className="text-xs text-slate-400">AI Research & Editorial</p>
               </div>
             </div>
             <button 
@@ -107,7 +107,7 @@ export function BlogPost() {
                 navigator.clipboard.writeText(window.location.href);
                 alert('Link copied to clipboard!');
               }}
-              className="flex items-center space-x-2 text-slate-500 hover:text-purple-600 transition-colors"
+              className="flex items-center space-x-2 text-slate-400 hover:text-purple-400 transition-colors"
             >
               <Share2 className="w-5 h-5" />
               <span className="text-sm font-bold">Share Article</span>

@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Sun, Moon, ChevronDown, Search as SearchIcon } from 'lucide-react';
+import { Menu, X, ChevronDown, Search as SearchIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useDarkMode } from '../hooks/useDarkMode';
 import { cn } from '../lib/utils';
 import { Logo } from './Logo';
+import { ThemeToggle } from './ThemeToggle';
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
@@ -31,7 +31,6 @@ export function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
-  const { isDark, toggle } = useDarkMode();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -149,17 +148,13 @@ export function Navbar() {
                 <SearchIcon className="w-5 h-5" />
               </button>
             </div>
-            <button 
-              onClick={toggle}
+            <ThemeToggle 
               className={cn(
-                "p-2 rounded-full transition-colors",
                 isTransparent 
                   ? "text-white hover:bg-white/10" 
                   : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
               )}
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+            />
             <Link 
               to="/tools" 
               className={cn(
@@ -175,15 +170,11 @@ export function Navbar() {
 
           {/* Mobile Toggle */}
           <div className="md:hidden flex items-center space-x-4">
-            <button 
-              onClick={toggle} 
+            <ThemeToggle 
               className={cn(
-                "p-2 transition-colors",
                 isTransparent ? "text-white" : "text-slate-600 dark:text-slate-400"
               )}
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+            />
             <button 
               onClick={() => setIsOpen(!isOpen)}
               className={cn(

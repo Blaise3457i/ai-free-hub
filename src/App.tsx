@@ -25,6 +25,7 @@ import { AdminSettings } from './pages/AdminSettings';
 import { AdminSEO } from './pages/AdminSEO';
 import { SiteConfig } from './components/SiteConfig';
 import { AuthProvider } from './hooks/useAuth';
+import { ThemeProvider } from './context/ThemeContext';
 import { usePageTracking } from './hooks/usePageTracking';
 import { AdminAnalytics } from './pages/AdminAnalytics';
 
@@ -39,9 +40,11 @@ function ScrollToTop() {
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <ThemeProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

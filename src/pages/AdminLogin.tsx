@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { Logo } from '../components/Logo';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { Lock, Mail, AlertCircle, Loader2 } from 'lucide-react';
 
 const ADMIN_EMAIL = "ublaise775@gmail.com";
@@ -48,7 +49,10 @@ export function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 relative">
+      <div className="absolute top-8 right-8">
+        <ThemeToggle className="bg-white dark:bg-slate-900 shadow-lg border border-slate-200 dark:border-slate-800" />
+      </div>
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800">
         <div className="text-center">
           <Logo className="mx-auto h-12 w-12" />
