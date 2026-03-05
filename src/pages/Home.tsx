@@ -105,12 +105,21 @@ export function Home() {
       .slice(0, 2);
   }, [tutorials]);
 
+  const heroVideos = useMemo(() => {
+    const v1 = settings.hero_video_1;
+    const v2 = settings.hero_video_2;
+    if (v1 && v2) return [v1, v2];
+    if (v1) return [v1];
+    if (v2) return [v2];
+    return HERO_VIDEOS;
+  }, [settings]);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentVideoIndex((prev) => (prev + 1) % HERO_VIDEOS.length);
+      setCurrentVideoIndex((prev) => (prev + 1) % heroVideos.length);
     }, 8000);
     return () => clearInterval(interval);
-  }, []);
+  }, [heroVideos.length]);
 
   return (
     <div className="overflow-x-hidden bg-white dark:bg-slate-950">
@@ -133,7 +142,7 @@ export function Home() {
                 loop
                 playsInline
                 className="w-full h-full object-cover"
-                src={HERO_VIDEOS[currentVideoIndex]}
+                src={heroVideos[currentVideoIndex]}
                 onLoadedMetadata={(e) => e.currentTarget.play()}
                 onCanPlayThrough={(e) => e.currentTarget.play()}
               />
@@ -205,7 +214,7 @@ export function Home() {
 
         {/* Slide Indicators */}
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex space-x-4 z-20">
-          {HERO_VIDEOS.map((_, i) => (
+          {heroVideos.map((_, i) => (
             <button 
               key={i} 
               onClick={() => setCurrentVideoIndex(i)}

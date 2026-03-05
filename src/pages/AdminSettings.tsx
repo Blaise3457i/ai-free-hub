@@ -6,7 +6,9 @@ import {
   Layout, 
   Search, 
   Loader2,
-  CheckCircle2
+  CheckCircle2,
+  Video,
+  Upload
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
@@ -56,6 +58,31 @@ export function AdminSettings() {
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       console.error('Failed to save settings', err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSaving(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setSettings({...settings, [key]: data.url});
+      }
+    } catch (err) {
+      console.error('Upload failed', err);
     } finally {
       setSaving(false);
     }
@@ -142,6 +169,69 @@ export function AdminSettings() {
                 onChange={(e) => setSettings({...settings, hero_subtitle: e.target.value})}
                 className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500/20 outline-none dark:text-white"
                 placeholder="Discover 500+ free AI tools..."
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Slider Videos Section */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+          <div className="p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex items-center space-x-3">
+            <Video className="w-5 h-5 text-emerald-600" />
+            <h2 className="font-bold text-slate-900 dark:text-white">Hero Slider Videos</h2>
+          </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Hero Video 1 (MP4)</label>
+              <div className="aspect-video rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden relative group border border-slate-200 dark:border-slate-700">
+                {settings.hero_video_1 ? (
+                  <video src={settings.hero_video_1} className="w-full h-full object-cover" muted loop autoPlay />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">
+                    <Video className="w-8 h-8" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <label className="cursor-pointer bg-white text-slate-900 px-4 py-2 rounded-lg font-bold text-sm flex items-center space-x-2 hover:bg-slate-100 transition-colors">
+                    <Upload className="w-4 h-4" />
+                    <span>Change Video</span>
+                    <input type="file" accept="video/*" className="hidden" onChange={(e) => handleVideoUpload(e, 'hero_video_1')} />
+                  </label>
+                </div>
+              </div>
+              <input 
+                type="text"
+                value={settings.hero_video_1 || ''}
+                onChange={(e) => setSettings({...settings, hero_video_1: e.target.value})}
+                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono dark:text-white"
+                placeholder="Video 1 URL"
+              />
+            </div>
+
+            <div className="space-y-4">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Hero Video 2 (MP4)</label>
+              <div className="aspect-video rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden relative group border border-slate-200 dark:border-slate-700">
+                {settings.hero_video_2 ? (
+                  <video src={settings.hero_video_2} className="w-full h-full object-cover" muted loop autoPlay />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">
+                    <Video className="w-8 h-8" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <label className="cursor-pointer bg-white text-slate-900 px-4 py-2 rounded-lg font-bold text-sm flex items-center space-x-2 hover:bg-slate-100 transition-colors">
+                    <Upload className="w-4 h-4" />
+                    <span>Change Video</span>
+                    <input type="file" accept="video/*" className="hidden" onChange={(e) => handleVideoUpload(e, 'hero_video_2')} />
+                  </label>
+                </div>
+              </div>
+              <input 
+                type="text"
+                value={settings.hero_video_2 || ''}
+                onChange={(e) => setSettings({...settings, hero_video_2: e.target.value})}
+                className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-mono dark:text-white"
+                placeholder="Video 2 URL"
               />
             </div>
           </div>
