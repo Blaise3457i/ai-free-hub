@@ -55,10 +55,10 @@ Sitemap: ${appUrl}/sitemap.xml`;
 
   // Sitemap.xml
   app.get("/sitemap.xml", async (req, res) => {
-    const appUrl = process.env.APP_URL || `http://localhost:${PORT}`;
+    const appUrl = process.env.APP_URL || `https://ai-free-hub-phi.vercel.app`;
     
     try {
-      // Fetch dynamic content
+      // Try to fetch dynamic content from Firestore
       const [toolsSnap, blogsSnap] = await Promise.all([
         db.collection('tools').where('published', '==', true).get(),
         db.collection('blogs').where('published', '==', true).get()
@@ -101,8 +101,15 @@ Sitemap: ${appUrl}/sitemap.xml`;
       res.header("Content-Type", "application/xml");
       res.send(sitemap);
     } catch (error) {
-      console.error("Sitemap generation failed:", error);
-      res.status(500).send("Error generating sitemap");
+      console.warn("Dynamic sitemap generation failed, falling back to static file:", error);
+      // Fallback to static file if it exists
+      const staticSitemapPath = path.join(__dirname, "public", "sitemap.xml");
+      if (fs.existsSync(staticSitemapPath)) {
+        res.header("Content-Type", "application/xml");
+        res.sendFile(staticSitemapPath);
+      } else {
+        res.status(500).send("Error generating sitemap");
+      }
     }
   });
 
