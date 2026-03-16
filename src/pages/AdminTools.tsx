@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 
 import { AITool } from '../types';
 
@@ -49,17 +49,14 @@ export function AdminTools() {
     setLoading(true);
     try {
       const toolsCollection = collection(db, 'tools');
-      const toolsSnapshot = await getDocs(toolsCollection).catch(e => {
-        console.warn('Tools collection inaccessible', e);
-        return { docs: [] };
-      });
-      const toolsList = (toolsSnapshot as any).docs.map((doc: any) => ({
+      const toolsSnapshot = await getDocs(toolsCollection);
+      const toolsList = toolsSnapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...doc.data()
       })) as AITool[];
       setTools(toolsList);
     } catch (err) {
-      console.error('Failed to fetch tools', err);
+      handleFirestoreError(err, OperationType.GET, 'tools');
     } finally {
       setLoading(false);
     }
@@ -130,13 +127,15 @@ export function AdminTools() {
         await updateDoc(toolDoc, cleanedData);
       } else {
         const toolsCollection = collection(db, 'tools');
-        await addDoc(toolsCollection, cleanedData);
+        await addDoc(toolsCollection, {
+          ...cleanedData,
+          createdAt: new Date()
+        });
       }
       setIsModalOpen(false);
       fetchTools();
     } catch (err: any) {
-      console.error('Failed to save tool', err);
-      setError(err.message || 'Failed to save tool. Please check your connection.');
+      handleFirestoreError(err, editingTool ? OperationType.UPDATE : OperationType.CREATE, 'tools');
     } finally {
       setSaving(false);
     }
@@ -150,7 +149,7 @@ export function AdminTools() {
       await deleteDoc(toolDoc);
       fetchTools();
     } catch (err) {
-      console.error('Failed to delete tool', err);
+      handleFirestoreError(err, OperationType.DELETE, 'tools');
     }
   };
 

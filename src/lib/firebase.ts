@@ -1,16 +1,96 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, doc, getDocFromServer, getDoc } from "firebase/firestore";
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBTht3DnfDVkOOhG88JOYY_SMWSN37jOxg",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "futurestack-ce07b.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "futurestack-ce07b",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "futurestack-ce07b.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "60847101653",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:60847101653:web:13071fa9d100931f5db45c"
-};
+// Import the Firebase configuration
+import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+
+/**
+ * Checks if the current user is an admin.
+ */
+export async function checkIsAdmin(): Promise<boolean> {
+  const user = auth.currentUser;
+  if (!user) return false;
+  
+  // Check if email matches default admin
+  if (user.email === "ublaise775@gmail.com" && user.emailVerified) {
+    return true;
+  }
+
+  try {
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    return userDoc.exists() && userDoc.data()?.role === 'admin';
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    return false;
+  }
+}
+
+// Connection test
+async function testConnection() {
+  try {
+    await getDocFromServer(doc(db, 'test', 'connection'));
+    console.log("Firestore connection successful");
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('the client is offline')) {
+      console.error("Please check your Firebase configuration. The client is offline.");
+    }
+    // Skip logging for other errors, as this is simply a connection test.
+  }
+}
+testConnection();
+
+export enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId: string | undefined;
+    email: string | null | undefined;
+    emailVerified: boolean | undefined;
+    isAnonymous: boolean | undefined;
+    tenantId: string | null | undefined;
+    providerInfo: {
+      providerId: string;
+      displayName: string | null;
+      email: string | null;
+      photoUrl: string | null;
+    }[];
+  }
+}
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      emailVerified: auth.currentUser?.emailVerified,
+      isAnonymous: auth.currentUser?.isAnonymous,
+      tenantId: auth.currentUser?.tenantId,
+      providerInfo: auth.currentUser?.providerData.map(provider => ({
+        providerId: provider.providerId,
+        displayName: provider.displayName,
+        email: provider.email,
+        photoUrl: provider.photoURL
+      })) || []
+    },
+    operationType,
+    path
+  }
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}

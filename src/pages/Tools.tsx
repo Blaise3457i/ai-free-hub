@@ -3,15 +3,15 @@ import { Search, Filter, SlidersHorizontal, ShieldCheck, Loader2 } from 'lucide-
 import { motion, AnimatePresence } from 'motion/react';
 import { ToolSkeleton } from '../components/ToolSkeleton';
 import { SearchBar } from '../components/SearchBar';
-import { ProviderCard } from '../components/ProviderCard';
 import { PROVIDERS } from '../constants/providers';
 import { useSearchParams } from 'react-router-dom';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db, handleFirestoreError, OperationType, checkIsAdmin } from '../lib/firebase';
 import { SEO } from '../components/SEO';
 
-// Lazy load ToolCard
+// Lazy load components
 const ToolCard = lazy(() => import('../components/ToolCard').then(m => ({ default: m.ToolCard })));
+const ProviderCard = lazy(() => import('../components/ProviderCard').then(m => ({ default: m.ProviderCard })));
 
 const CATEGORIES = ['All', 'Image', 'Video', 'Audio', 'Text', 'Productivity', 'Misc'];
 
@@ -24,17 +24,23 @@ export function Tools() {
     return cached ? JSON.parse(cached) : [];
   });
   const [loading, setLoading] = useState(tools.length === 0);
+  const [isAdmin, setIsAdmin] = useState(false);
   const activeCategory = searchParams.get('cat') || 'All';
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const admin = await checkIsAdmin();
+      setIsAdmin(admin);
+    };
+    checkAdmin();
+  }, []);
 
   useEffect(() => {
     const fetchTools = async () => {
       try {
         const toolsCollection = collection(db, 'tools');
-        const toolsSnapshot = await getDocs(toolsCollection).catch(e => {
-          console.warn('Tools collection inaccessible', e);
-          return { docs: [] };
-        });
-        const toolsList = (toolsSnapshot as any).docs.map((doc: any) => ({
+        const toolsSnapshot = await getDocs(toolsCollection);
+        const toolsList = toolsSnapshot.docs.map((doc: any) => ({
           id: doc.id,
           ...doc.data()
         }));
@@ -43,7 +49,7 @@ export function Tools() {
         setTools(toolsList);
         localStorage.setItem('neural_tools_cache', JSON.stringify(toolsList));
       } catch (err) {
-        console.error('Failed to fetch tools', err);
+        handleFirestoreError(err, OperationType.GET, 'tools');
       } finally {
         setLoading(false);
       }
@@ -53,7 +59,7 @@ export function Tools() {
 
   const filteredTools = useMemo(() => {
     return tools
-      .filter(tool => tool.published !== false)
+      .filter(tool => tool.published !== false || isAdmin)
       .filter(tool => {
         const q = searchQuery.toLowerCase();
         const matchesSearch = tool.name.toLowerCase().includes(q) || 
@@ -193,9 +199,11 @@ export function Tools() {
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {filteredProviders.map(provider => (
-                <ProviderCard key={provider.id} provider={provider} />
-              ))}
+              <Suspense fallback={filteredProviders.map((_, i) => <div key={i} className="h-48 bg-slate-100 dark:bg-slate-800 rounded-3xl animate-pulse" />)}>
+                {filteredProviders.map(provider => (
+                  <ProviderCard key={provider.id} provider={provider} />
+                ))}
+              </Suspense>
             </div>
 
             {!searchQuery && (

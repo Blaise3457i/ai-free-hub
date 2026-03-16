@@ -23,6 +23,8 @@ export function ProviderCard({ provider }: ProviderCardProps) {
             <img 
               src={provider.logo} 
               alt={provider.name} 
+              width={64}
+              height={64}
               className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
               referrerPolicy="no-referrer"
               onError={() => setImageError(true)}
