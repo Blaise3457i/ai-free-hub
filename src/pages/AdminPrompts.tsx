@@ -104,10 +104,7 @@ export function AdminPrompts() {
         await updateDoc(promptDoc, cleanedData);
       } else {
         const promptsCollection = collection(db, 'prompts');
-        await addDoc(promptsCollection, {
-          ...cleanedData,
-          createdAt: new Date()
-        });
+        await addDoc(promptsCollection, cleanedData);
       }
       setIsModalOpen(false);
       fetchPrompts();

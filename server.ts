@@ -13,16 +13,12 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 // Initialize Firebase Admin
-try {
-  if (!admin.apps.length) {
-    admin.initializeApp({
-      credential: admin.credential.applicationDefault()
-    });
-  }
-} catch (error) {
-  console.warn("Firebase Admin initialization failed. Some server-side features may be limited.", error);
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault()
+  });
 }
-const db = admin.apps.length ? admin.firestore() : null;
+const db = admin.firestore();
 
 // Configure Multer for file uploads
 const storage = multer.diskStorage({
@@ -62,8 +58,6 @@ Sitemap: ${appUrl}/sitemap.xml`;
     const appUrl = process.env.APP_URL || `https://ai-free-hub-phi.vercel.app`;
     
     try {
-      if (!db) throw new Error("Firestore Admin not initialized");
-      
       // Try to fetch dynamic content from Firestore
       const [toolsSnap, blogsSnap] = await Promise.all([
         db.collection('tools').where('published', '==', true).get(),
@@ -140,24 +134,10 @@ Sitemap: ${appUrl}/sitemap.xml`;
       appType: "spa",
     });
     app.use(vite.middlewares);
-    
-    // Fallback to index.html for SPA routing in development if vite middleware doesn't catch it
-    app.get("*", async (req, res, next) => {
-      if (req.originalUrl.startsWith('/api')) return next();
-      try {
-        const template = fs.readFileSync(path.resolve(__dirname, "index.html"), "utf-8");
-        const html = await vite.transformIndexHtml(req.originalUrl, template);
-        res.status(200).set({ "Content-Type": "text/html" }).end(html);
-      } catch (e) {
-        vite.ssrFixStacktrace(e as Error);
-        next(e);
-      }
-    });
   } else {
-    const distPath = path.resolve(__dirname, "dist");
-    app.use(express.static(distPath));
+    app.use(express.static("dist"));
     app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+      res.sendFile(path.resolve(__dirname, "dist", "index.html"));
     });
   }
 

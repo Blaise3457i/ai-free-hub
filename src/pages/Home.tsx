@@ -7,7 +7,7 @@ import { SearchBar } from '../components/SearchBar';
 import { PromptSkeleton } from '../components/PromptSkeleton';
 import { TutorialSkeleton } from '../components/TutorialSkeleton';
 import { collection, getDocs, limit, query } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType, checkIsAdmin } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import { SEO } from '../components/SEO';
 
 // Lazy load card components
@@ -39,15 +39,6 @@ export function Home() {
   const [loading, setLoading] = useState(tools.length === 0);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const admin = await checkIsAdmin();
-      setIsAdmin(admin);
-    };
-    checkAdmin();
-  }, []);
 
   // Organization Structured Data
   const organizationData = {
@@ -65,12 +56,18 @@ export function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Firestore request timed out')), 15000)
+      );
+
       try {
-        const [toolsSnap, promptsSnap, tutorialsSnap] = await Promise.all([
-          getDocs(collection(db, 'tools')),
-          getDocs(collection(db, 'prompts')),
-          getDocs(collection(db, 'tutorials'))
+        const fetchPromise = Promise.all([
+          getDocs(collection(db, 'tools')).catch(e => { console.warn('Tools collection inaccessible', e); return { docs: [] }; }),
+          getDocs(collection(db, 'prompts')).catch(e => { console.warn('Prompts collection inaccessible', e); return { docs: [] }; }),
+          getDocs(collection(db, 'tutorials')).catch(e => { console.warn('Tutorials collection inaccessible', e); return { docs: [] }; })
         ]);
+
+        const [toolsSnap, promptsSnap, tutorialsSnap] = await Promise.race([fetchPromise, timeoutPromise]) as any;
         
         const toolsList = toolsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
         const promptsList = promptsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
@@ -97,7 +94,7 @@ export function Home() {
           console.warn('Settings collection not found or inaccessible', e);
         }
       } catch (err) {
-        handleFirestoreError(err, OperationType.GET, 'home_data');
+        console.error('Failed to fetch home data', err);
       } finally {
         setLoading(false);
       }
@@ -106,28 +103,17 @@ export function Home() {
     fetchData();
   }, []);
 
-  const toolCategories = ['Text', 'Video', 'Image', 'Audio', 'Productivity', 'Misc'];
+  const toolCategories = ['Text', 'Video', 'Image', 'Audio', 'Productivity'];
   
-  const latestTools = useMemo(() => {
-    return tools
-      .filter(tool => tool.published !== false || isAdmin)
-      .sort((a, b) => {
-        const dateA = a.createdAt?.seconds || 0;
-        const dateB = b.createdAt?.seconds || 0;
-        return dateB - dateA;
-      })
-      .slice(0, 10);
-  }, [tools, isAdmin]);
-
   const toolsByCategory = useMemo(() => {
     return toolCategories.map(cat => ({
-      name: cat === 'Text' ? 'Text Generators' : cat === 'Video' ? 'Video Generators' : cat === 'Image' ? 'Image Generators' : cat === 'Audio' ? 'Audio Generators' : cat === 'Misc' ? 'Misc/Utility' : cat,
+      name: cat === 'Text' ? 'Text Generators' : cat === 'Video' ? 'Video Generators' : cat === 'Image' ? 'Image Generators' : cat === 'Audio' ? 'Audio Generators' : cat,
       tools: tools
-        .filter(tool => tool.category === cat && (tool.published !== false || isAdmin))
+        .filter(tool => tool.category === cat && tool.published !== false)
         .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
-        .slice(0, 12)
+        .slice(0, 5)
     }));
-  }, [tools, isAdmin]);
+  }, [tools]);
 
   const featuredPrompts = useMemo(() => {
     return prompts
@@ -312,77 +298,37 @@ export function Home() {
       <section className="py-32 bg-slate-50/30 dark:bg-slate-900/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6">Explore AI Tools</h2>
+            <h2 className="text-4xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6">Featured AI Tools</h2>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Hand-picked AI tools that offer incredible value for free. Boost your creative output today.</p>
           </div>
 
           <div className="space-y-24">
-            {/* Latest Tools Section */}
-            {latestTools.length > 0 && (
-              <div>
+            {toolsByCategory.map((category) => (
+              <div key={category.name}>
                 <div className="flex items-center justify-between mb-10">
                   <h3 className="text-2xl lg:text-3xl font-black text-slate-900 dark:text-white flex items-center">
-                    <span className="w-2 h-8 bg-indigo-600 rounded-full mr-4"></span>
-                    Latest Additions
+                    <span className="w-2 h-8 bg-purple-600 rounded-full mr-4"></span>
+                    {category.name}
                   </h3>
-                  <Link to="/tools" className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline flex items-center">
+                  <Link to={`/tools?cat=${category.name.split(' ')[0]}`} className="text-purple-600 dark:text-purple-400 font-bold hover:underline flex items-center">
                     View All <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                  <Suspense fallback={Array.from({ length: 5 }).map((_, i) => <ToolSkeleton key={i} />)}>
-                    {latestTools.map(tool => (
-                      <ToolCard key={tool.id} tool={tool} />
-                    ))}
-                  </Suspense>
+                  {loading && category.tools.length === 0 ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <ToolSkeleton key={i} />
+                    ))
+                  ) : (
+                    <Suspense fallback={category.tools.map((_, i) => <ToolSkeleton key={i} />)}>
+                      {category.tools.map(tool => (
+                        <ToolCard key={tool.id} tool={tool} />
+                      ))}
+                    </Suspense>
+                  )}
                 </div>
               </div>
-            )}
-
-            {toolsByCategory.map((category) => (
-              category.tools.length > 0 && (
-                <div key={category.name}>
-                  <div className="flex items-center justify-between mb-10">
-                    <h3 className="text-2xl lg:text-3xl font-black text-slate-900 dark:text-white flex items-center">
-                      <span className="w-2 h-8 bg-purple-600 rounded-full mr-4"></span>
-                      {category.name}
-                    </h3>
-                    <Link to={`/tools?cat=${category.name.split(' ')[0]}`} className="text-purple-600 dark:text-purple-400 font-bold hover:underline flex items-center">
-                      View All <ArrowRight className="w-4 h-4 ml-2" />
-                    </Link>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                    {loading && category.tools.length === 0 ? (
-                      Array.from({ length: 5 }).map((_, i) => (
-                        <ToolSkeleton key={i} />
-                      ))
-                    ) : (
-                      <Suspense fallback={category.tools.map((_, i) => <ToolSkeleton key={i} />)}>
-                        {category.tools.map(tool => (
-                          <ToolCard key={tool.id} tool={tool} />
-                        ))}
-                      </Suspense>
-                    )}
-                  </div>
-                </div>
-              )
             ))}
-
-            {/* Empty State */}
-            {!loading && tools.length === 0 && (
-              <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 mb-6">
-                  <Sparkles className="w-8 h-8 text-slate-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">No tools found yet</h3>
-                <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto">We're currently updating our directory with the best free AI tools. Check back soon!</p>
-                {isAdmin && (
-                  <Link to="/admin/tools" className="inline-flex items-center bg-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-purple-700 transition-all">
-                    Add Your First Tool
-                  </Link>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </section>

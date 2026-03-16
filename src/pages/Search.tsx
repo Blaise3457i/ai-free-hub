@@ -1,19 +1,14 @@
 import { useSearchParams, Link } from 'react-router-dom';
-import { useMemo, useState, useEffect, lazy, Suspense } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Search as SearchIcon, Zap, Sparkles, BookOpen, Building2, Loader2 } from 'lucide-react';
-import { ToolSkeleton } from '../components/ToolSkeleton';
-import { PromptSkeleton } from '../components/PromptSkeleton';
-import { TutorialSkeleton } from '../components/TutorialSkeleton';
+import { ToolCard } from '../components/ToolCard';
+import { PromptCard } from '../components/PromptCard';
+import { TutorialCard } from '../components/TutorialCard';
+import { ProviderCard } from '../components/ProviderCard';
 import { PROVIDERS } from '../constants/providers';
 import { motion } from 'motion/react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-
-// Lazy load card components
-const ToolCard = lazy(() => import('../components/ToolCard').then(m => ({ default: m.ToolCard })));
-const PromptCard = lazy(() => import('../components/PromptCard').then(m => ({ default: m.PromptCard })));
-const TutorialCard = lazy(() => import('../components/TutorialCard').then(m => ({ default: m.TutorialCard })));
-const ProviderCard = lazy(() => import('../components/ProviderCard').then(m => ({ default: m.ProviderCard })));
 
 export function Search() {
   const [searchParams] = useSearchParams();
@@ -125,11 +120,9 @@ export function Search() {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                  <Suspense fallback={results.tools.map((_, i) => <ToolSkeleton key={i} />)}>
-                    {results.tools.map(tool => (
-                      <ToolCard key={tool.id} tool={tool} />
-                    ))}
-                  </Suspense>
+                  {results.tools.map(tool => (
+                    <ToolCard key={tool.id} tool={tool} />
+                  ))}
                 </div>
               </section>
             )}
@@ -144,11 +137,9 @@ export function Search() {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  <Suspense fallback={results.prompts.map((_, i) => <PromptSkeleton key={i} />)}>
-                    {results.prompts.map(prompt => (
-                      <PromptCard key={prompt.id} prompt={prompt} />
-                    ))}
-                  </Suspense>
+                  {results.prompts.map(prompt => (
+                    <PromptCard key={prompt.id} prompt={prompt} />
+                  ))}
                 </div>
               </section>
             )}
@@ -163,11 +154,9 @@ export function Search() {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-12">
-                  <Suspense fallback={results.tutorials.map((_, i) => <TutorialSkeleton key={i} />)}>
-                    {results.tutorials.map(tutorial => (
-                      <TutorialCard key={tutorial.id} tutorial={tutorial} />
-                    ))}
-                  </Suspense>
+                  {results.tutorials.map(tutorial => (
+                    <TutorialCard key={tutorial.id} tutorial={tutorial} />
+                  ))}
                 </div>
               </section>
             )}
@@ -182,11 +171,9 @@ export function Search() {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                  <Suspense fallback={results.providers.map((_, i) => <div key={i} className="h-48 bg-slate-100 dark:bg-slate-800 rounded-3xl animate-pulse" />)}>
-                    {results.providers.map(provider => (
-                      <ProviderCard key={provider.id} provider={provider} />
-                    ))}
-                  </Suspense>
+                  {results.providers.map(provider => (
+                    <ProviderCard key={provider.id} provider={provider} />
+                  ))}
                 </div>
               </section>
             )}
