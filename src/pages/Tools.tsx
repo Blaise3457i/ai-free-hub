@@ -30,7 +30,7 @@ export function Tools() {
     const fetchTools = async () => {
       try {
         const toolsCollection = collection(db, 'tools');
-        const toolsSnapshot = await getDocs(toolsCollection).catch(e => {
+        const toolsSnapshot = await getDocs(query(toolsCollection, where('published', '==', true))).catch(e => {
           console.warn('Tools collection inaccessible', e);
           return { docs: [] };
         });

@@ -1,16 +1,17 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBTht3DnfDVkOOhG88JOYY_SMWSN37jOxg",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "futurestack-ce07b.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "futurestack-ce07b",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "futurestack-ce07b.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "60847101653",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:60847101653:web:13071fa9d100931f5db45c"
-};
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, enableNetwork } from "firebase/firestore";
+import firebaseConfig from "../../firebase-applet-config.json";
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+// Use initializeFirestore to enable long polling which is more reliable in restricted environments
+// The signature is initializeFirestore(app, settings, databaseId)
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+}, firebaseConfig.firestoreDatabaseId || '(default)');
+
+// Explicitly enable network to ensure connectivity
+enableNetwork(db).catch(err => console.error("Failed to enable Firestore network:", err));

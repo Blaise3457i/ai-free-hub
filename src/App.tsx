@@ -92,18 +92,19 @@ function AppContent() {
             <Route path="/contact" element={<Contact />} />
 
             {/* Admin Routes */}
-            <Route path="/admin-login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="dashboard" replace />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="tools" element={<AdminTools />} />
-              <Route path="prompts" element={<AdminPrompts />} />
-              <Route path="tutorials" element={<AdminTutorials />} />
-              <Route path="blog" element={<AdminBlog />} />
-              <Route path="media" element={<AdminMedia />} />
-              <Route path="seo" element={<AdminSEO />} />
-              <Route path="settings" element={<AdminSettings />} />
-              <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="/admin">
+              <Route index element={<AdminLogin />} />
+              <Route element={<AdminLayout />}>
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="tools" element={<AdminTools />} />
+                <Route path="prompts" element={<AdminPrompts />} />
+                <Route path="tutorials" element={<AdminTutorials />} />
+                <Route path="blog" element={<AdminBlog />} />
+                <Route path="media" element={<AdminMedia />} />
+                <Route path="seo" element={<AdminSEO />} />
+                <Route path="settings" element={<AdminSettings />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
+              </Route>
             </Route>
           </Routes>
         </Suspense>

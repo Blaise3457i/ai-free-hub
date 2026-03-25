@@ -7,12 +7,12 @@ import { TutorialCard } from '../components/TutorialCard';
 import { ProviderCard } from '../components/ProviderCard';
 import { PROVIDERS } from '../constants/providers';
 import { motion } from 'motion/react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 export function Search() {
   const [searchParams] = useSearchParams();
-  const query = searchParams.get('q') || '';
+  const searchQuery = searchParams.get('q') || '';
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{ tools: any[], prompts: any[], tutorials: any[] }>({
     tools: [],
@@ -24,9 +24,9 @@ export function Search() {
     const fetchData = async () => {
       try {
         const [toolsSnap, promptsSnap, tutorialsSnap] = await Promise.all([
-          getDocs(collection(db, 'tools')).catch(e => { console.warn('Tools collection inaccessible', e); return { docs: [] }; }),
-          getDocs(collection(db, 'prompts')).catch(e => { console.warn('Prompts collection inaccessible', e); return { docs: [] }; }),
-          getDocs(collection(db, 'tutorials')).catch(e => { console.warn('Tutorials collection inaccessible', e); return { docs: [] }; })
+          getDocs(query(collection(db, 'tools'), where('published', '==', true))).catch(e => { console.warn('Tools collection inaccessible', e); return { docs: [] }; }),
+          getDocs(query(collection(db, 'prompts'), where('published', '==', true))).catch(e => { console.warn('Prompts collection inaccessible', e); return { docs: [] }; }),
+          getDocs(query(collection(db, 'tutorials'), where('published', '==', true))).catch(e => { console.warn('Tutorials collection inaccessible', e); return { docs: [] }; })
         ]);
         
         setData({
@@ -44,9 +44,9 @@ export function Search() {
   }, []);
 
   const results = useMemo(() => {
-    if (!query) return { tools: [], prompts: [], tutorials: [], providers: [] };
+    if (!searchQuery) return { tools: [], prompts: [], tutorials: [], providers: [] };
 
-    const q = query.toLowerCase();
+    const q = searchQuery.toLowerCase();
     const publishedTools = data.tools.filter(t => t.published !== false);
     const publishedPrompts = data.prompts.filter(p => p.published !== false);
     const publishedTutorials = data.tutorials.filter(t => t.published !== false);
@@ -75,7 +75,7 @@ export function Search() {
         'providers'.includes(q)
       ),
     };
-  }, [query, data]);
+  }, [searchQuery, data]);
 
   const totalResults = results.tools.length + results.prompts.length + results.tutorials.length + results.providers.length;
 
@@ -92,7 +92,7 @@ export function Search() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <h1 className="text-3xl font-black text-slate-900 dark:text-white mb-2">
-            Search Results for "{query}"
+            Search Results for "{searchQuery}"
           </h1>
           <p className="text-slate-500 dark:text-slate-400">
             Found {totalResults} results across the platform.

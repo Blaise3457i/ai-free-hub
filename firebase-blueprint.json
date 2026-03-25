@@ -1,0 +1,123 @@
+{
+  "entities": {
+    "AITool": {
+      "title": "AI Tool",
+      "description": "An artificial intelligence tool listed in the directory.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "The name of the tool." },
+        "description": { "type": "string", "description": "A brief description of the tool." },
+        "category": { "type": "string", "description": "The category of the tool (e.g., Image, Video)." },
+        "isFree": { "type": "boolean", "description": "Whether the tool is free to use." },
+        "image": { "type": "string", "description": "URL to the tool's thumbnail image." },
+        "imageAlt": { "type": "string", "description": "Alt text for the image." },
+        "link": { "type": "string", "description": "External link to the tool." },
+        "published": { "type": "boolean", "description": "Whether the tool is visible to the public." },
+        "featured": { "type": "boolean", "description": "Whether the tool is featured on the homepage." },
+        "seo": {
+          "type": "object",
+          "properties": {
+            "metaTitle": { "type": "string" },
+            "metaDescription": { "type": "string" },
+            "metaKeywords": { "type": "string" }
+          }
+        }
+      },
+      "required": ["name", "description", "link", "image"]
+    },
+    "Prompt": {
+      "title": "AI Prompt",
+      "description": "A curated AI prompt.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" },
+        "published": { "type": "boolean" }
+      },
+      "required": ["title", "content"]
+    },
+    "BlogPost": {
+      "title": "Blog Post",
+      "description": "A blog article.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "author": { "type": "string" },
+        "published": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content"]
+    },
+    "Tutorial": {
+      "title": "Tutorial",
+      "description": "An expert tutorial.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "published": { "type": "boolean" }
+      },
+      "required": ["title", "content"]
+    },
+    "Media": {
+      "title": "Media Asset",
+      "description": "An uploaded image or video asset.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "url"]
+    },
+    "Setting": {
+      "title": "Site Setting",
+      "description": "A global site configuration setting.",
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "value": { "type": "string" }
+      },
+      "required": ["key", "value"]
+    },
+    "AnalyticsDaily": {
+      "title": "Daily Analytics",
+      "description": "Daily view counts.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "views": { "type": "integer" }
+      }
+    },
+    "AnalyticsGlobal": {
+      "title": "Global Analytics",
+      "description": "Total site view counts.",
+      "type": "object",
+      "properties": {
+        "totalViews": { "type": "integer" }
+      }
+    },
+    "AnalyticsPage": {
+      "title": "Page Analytics",
+      "description": "View counts per page path.",
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "views": { "type": "integer" }
+      }
+    }
+  },
+  "firestore": {
+    "tools": { "schema": "AITool", "description": "Collection of AI tools." },
+    "prompts": { "schema": "Prompt", "description": "Collection of curated prompts." },
+    "blogs": { "schema": "BlogPost", "description": "Collection of blog posts." },
+    "tutorials": { "schema": "Tutorial", "description": "Collection of tutorials." },
+    "media": { "schema": "Media", "description": "Collection of uploaded media assets." },
+    "settings": { "schema": "Setting", "description": "Collection of site settings." },
+    "analytics_daily": { "schema": "AnalyticsDaily", "description": "Daily traffic data." },
+    "analytics_global": { "schema": "AnalyticsGlobal", "description": "Global traffic data." },
+    "analytics_pages": { "schema": "AnalyticsPage", "description": "Per-page traffic data." }
+  }
+}

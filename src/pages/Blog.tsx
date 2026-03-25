@@ -2,7 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { BlogSkeleton } from '../components/BlogSkeleton';
 import { Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useNavigate } from 'react-router-dom';
 import { SEO } from '../components/SEO';
@@ -22,7 +22,7 @@ export function Blog() {
     const fetchPosts = async () => {
       try {
         const blogsCollection = collection(db, 'blogs');
-        const blogsSnapshot = await getDocs(blogsCollection).catch(e => {
+        const blogsSnapshot = await getDocs(query(blogsCollection, where('published', '==', true))).catch(e => {
           console.warn('Blogs collection inaccessible', e);
           return { docs: [] };
         });

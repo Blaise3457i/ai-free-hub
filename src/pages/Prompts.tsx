@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { PromptSkeleton } from '../components/PromptSkeleton';
 import { SearchBar } from '../components/SearchBar';
 import { useSearchParams } from 'react-router-dom';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { SEO } from '../components/SEO';
 
@@ -26,7 +26,7 @@ export function Prompts() {
     const fetchPrompts = async () => {
       try {
         const promptsCollection = collection(db, 'prompts');
-        const promptsSnapshot = await getDocs(promptsCollection).catch(e => {
+        const promptsSnapshot = await getDocs(query(promptsCollection, where('published', '==', true))).catch(e => {
           console.warn('Prompts collection inaccessible', e);
           return { docs: [] };
         });

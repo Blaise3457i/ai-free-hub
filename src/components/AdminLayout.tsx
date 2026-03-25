@@ -43,12 +43,12 @@ export function AdminLayout() {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/admin-login" replace />;
+    return <Navigate to="/admin" replace />;
   }
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin-login');
+    navigate('/admin');
   };
 
   return (

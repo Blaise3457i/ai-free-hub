@@ -6,7 +6,7 @@ import { ToolSkeleton } from '../components/ToolSkeleton';
 import { SearchBar } from '../components/SearchBar';
 import { PromptSkeleton } from '../components/PromptSkeleton';
 import { TutorialSkeleton } from '../components/TutorialSkeleton';
-import { collection, getDocs, limit, query } from 'firebase/firestore';
+import { collection, getDocs, limit, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { SEO } from '../components/SEO';
 
@@ -56,31 +56,38 @@ export function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const TIMEOUT_MS = 10000;
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Firestore request timed out')), 15000)
+        setTimeout(() => reject(new Error('Firestore request timed out')), TIMEOUT_MS)
       );
 
       try {
+        console.log('Fetching home data...');
         const fetchPromise = Promise.all([
-          getDocs(collection(db, 'tools')).catch(e => { console.warn('Tools collection inaccessible', e); return { docs: [] }; }),
-          getDocs(collection(db, 'prompts')).catch(e => { console.warn('Prompts collection inaccessible', e); return { docs: [] }; }),
-          getDocs(collection(db, 'tutorials')).catch(e => { console.warn('Tutorials collection inaccessible', e); return { docs: [] }; })
+          getDocs(query(collection(db, 'tools'), where('published', '==', true))).catch(e => { console.warn('Tools collection inaccessible', e); return { docs: [] }; }),
+          getDocs(query(collection(db, 'prompts'), where('published', '==', true))).catch(e => { console.warn('Prompts collection inaccessible', e); return { docs: [] }; }),
+          getDocs(query(collection(db, 'tutorials'), where('published', '==', true))).catch(e => { console.warn('Tutorials collection inaccessible', e); return { docs: [] }; })
         ]);
 
-        const [toolsSnap, promptsSnap, tutorialsSnap] = await Promise.race([fetchPromise, timeoutPromise]) as any;
+        const result = await Promise.race([fetchPromise, timeoutPromise]);
+        const [toolsSnap, promptsSnap, tutorialsSnap] = result as any;
         
         const toolsList = toolsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
         const promptsList = promptsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
         const tutorialsList = tutorialsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
 
-        setTools(toolsList);
-        setPrompts(promptsList);
-        setTutorials(tutorialsList);
-
-        // Update caches
-        localStorage.setItem('neural_tools_cache', JSON.stringify(toolsList));
-        localStorage.setItem('neural_prompts_cache', JSON.stringify(promptsList));
-        localStorage.setItem('neural_tutorials_cache', JSON.stringify(tutorialsList));
+        if (toolsList.length > 0) {
+          setTools(toolsList);
+          localStorage.setItem('neural_tools_cache', JSON.stringify(toolsList));
+        }
+        if (promptsList.length > 0) {
+          setPrompts(promptsList);
+          localStorage.setItem('neural_prompts_cache', JSON.stringify(promptsList));
+        }
+        if (tutorialsList.length > 0) {
+          setTutorials(tutorialsList);
+          localStorage.setItem('neural_tutorials_cache', JSON.stringify(tutorialsList));
+        }
 
         try {
           const settingsSnap = await getDocs(collection(db, 'settings'));
@@ -93,8 +100,9 @@ export function Home() {
         } catch (e) {
           console.warn('Settings collection not found or inaccessible', e);
         }
-      } catch (err) {
-        console.error('Failed to fetch home data', err);
+      } catch (err: any) {
+        console.error('Failed to fetch home data:', err.message);
+        // If it timed out, we still have cached data from state initialization
       } finally {
         setLoading(false);
       }

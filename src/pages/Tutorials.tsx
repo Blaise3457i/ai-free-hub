@@ -3,7 +3,7 @@ import { BookOpen, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TutorialSkeleton } from '../components/TutorialSkeleton';
 import { SearchBar } from '../components/SearchBar';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { SEO } from '../components/SEO';
 
@@ -25,7 +25,7 @@ export function Tutorials() {
     const fetchTutorials = async () => {
       try {
         const tutorialsCollection = collection(db, 'tutorials');
-        const tutorialsSnapshot = await getDocs(tutorialsCollection).catch(e => {
+        const tutorialsSnapshot = await getDocs(query(tutorialsCollection, where('published', '==', true))).catch(e => {
           console.warn('Tutorials collection inaccessible', e);
           return { docs: [] };
         });

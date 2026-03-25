@@ -108,7 +108,10 @@ export function AdminTutorials() {
         await updateDoc(tutorialDoc, cleanedData);
       } else {
         const tutorialsCollection = collection(db, 'tutorials');
-        await addDoc(tutorialsCollection, cleanedData);
+        await addDoc(tutorialsCollection, {
+          ...cleanedData,
+          createdAt: new Date()
+        });
       }
       setIsModalOpen(false);
       fetchTutorials();
